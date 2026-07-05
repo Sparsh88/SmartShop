@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { exec } from 'child_process';
 
 import connectDB from './config/db.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -57,6 +58,18 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/assistant', assistantRoutes);
+
+// Database seed trigger route
+app.get('/api/seed-db', (req, res) => {
+  exec('node seed.js', (err, stdout, stderr) => {
+    if (err) {
+      console.error(`Database seeding via endpoint failed: ${err.message}`);
+      return res.status(500).json({ success: false, error: err.message, stderr });
+    }
+    console.log(`Database seeded via API endpoint successfully:\n${stdout}`);
+    res.json({ success: true, message: 'Database seeded successfully!', output: stdout });
+  });
+});
 
 // Base route check
 app.get('/', (req, res) => {
