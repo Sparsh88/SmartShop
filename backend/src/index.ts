@@ -15,6 +15,7 @@ import orderRoutes from './routes/orderRoutes';
 import paymentRoutes from './routes/paymentRoutes';
 import reviewRoutes from './routes/reviewRoutes';
 import adminRoutes from './routes/adminRoutes';
+import couponRoutes from './routes/couponRoutes';
 
 // Import middlewares
 import { globalErrorHandler } from './middleware/errorMiddleware';
@@ -99,6 +100,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/coupons', couponRoutes);
 
 // Fallback Route for Undefined Paths
 app.use('*', (req: any, _res: any, next: any) => {

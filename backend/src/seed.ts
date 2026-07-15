@@ -1027,6 +1027,29 @@ async function main() {
     });
   }
 
+  // Seed Coupons
+  await prisma.coupon.createMany({
+    data: [
+      {
+        code: 'WELCOME10',
+        discountType: DiscountType.PERCENTAGE,
+        discountValue: 10,
+        minCartValue: 3999,
+        expiryDate: new Date('2027-12-31'),
+        isActive: true,
+      },
+      {
+        code: 'FLAT500',
+        discountType: DiscountType.FLAT,
+        discountValue: 500,
+        minCartValue: 9999,
+        expiryDate: new Date('2027-12-31'),
+        isActive: true,
+      },
+    ],
+    skipDuplicates: true,
+  });
+
   console.log('Seeding completed successfully!');
 }
 
