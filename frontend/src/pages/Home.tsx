@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/LoadingSkeleton';
 import { ArrowRight, ShieldCheck, Truck, RotateCcw, Check } from 'lucide-react';
 import HeroCarousel from '../components/HeroCarousel';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   // Query homepage products from Express server
@@ -70,7 +71,13 @@ export default function Home() {
         </div>
 
         {/* Circular Categories List */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
           <div className="text-center space-y-2 mb-10">
             <h2 className="text-2xl sm:text-3xl font-black font-display text-white uppercase tracking-widest text-indigo-400 font-semibold">
               Shop By Collection
@@ -99,7 +106,7 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* RTL scrolling marquee banner */}
         <div className="w-full overflow-hidden bg-emerald-800 py-3 relative flex items-center shadow-inner">
@@ -120,7 +127,13 @@ export default function Home() {
       </div>
 
       {/* 3. FEATURED PRODUCTS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <motion.section 
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black font-display text-white">Featured Products</h2>
@@ -140,10 +153,16 @@ export default function Home() {
             ))}
           </div>
         )}
-      </section>
+      </motion.section>
 
       {/* 4. KEY ADVANTAGES BANNER */}
-      <section className="bg-slate-900/50 border-y border-slate-800 py-10 transition-colors duration-300">
+      <motion.section 
+        initial={{ opacity: 0, scale: 0.97 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="bg-slate-900/50 border-y border-slate-800 py-10 transition-colors duration-300"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
           <div className="flex items-center gap-4">
             <div className="bg-indigo-500/10 p-3.5 rounded-full text-indigo-400">
@@ -175,10 +194,16 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 5. TRENDING PRODUCTS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <motion.section 
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black font-display text-white">Trending Items</h2>
@@ -198,10 +223,16 @@ export default function Home() {
             ))}
           </div>
         )}
-      </section>
+      </motion.section>
 
       {/* 6. NEWSLETTER SUBSCRIPTION */}
-      <section className="max-w-4xl mx-auto px-4">
+      <motion.section 
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.7, ease: 'easeOut', delay: 0.1 }}
+        className="max-w-4xl mx-auto px-4"
+      >
         <div className="relative glass-card border border-slate-800 rounded-3xl p-8 sm:p-12 text-center overflow-hidden">
           <div className="absolute -top-10 -left-10 w-44 h-44 bg-indigo-500/10 rounded-full blur-2xl"></div>
           <div className="absolute -bottom-10 -right-10 w-44 h-44 bg-purple-500/10 rounded-full blur-2xl"></div>
@@ -226,7 +257,7 @@ export default function Home() {
             </form>
           </div>
         </div>
-      </section>
+      </motion.section>
 
     </div>
   );
