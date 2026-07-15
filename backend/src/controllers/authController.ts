@@ -27,8 +27,8 @@ const resetPasswordSchema = z.object({
 const generateAccessToken = (userId: string, email: string, role: string): string => {
   return jwt.sign(
     { id: userId, email, role },
-    process.env.JWT_ACCESS_SECRET || 'smartshop_super_secret_access_key_2026_jwt_token',
-    { expiresIn: process.env.JWT_ACCESS_EXPIRY || '15m' }
+    (process.env.JWT_ACCESS_SECRET || 'smartshop_super_secret_access_key_2026_jwt_token') as string,
+    { expiresIn: process.env.JWT_ACCESS_EXPIRY || '15m' } as jwt.SignOptions
   );
 };
 
@@ -36,8 +36,8 @@ const generateAccessToken = (userId: string, email: string, role: string): strin
 const generateRefreshToken = (userId: string, email: string, role: string): string => {
   return jwt.sign(
     { id: userId, email, role },
-    process.env.JWT_REFRESH_SECRET || 'smartshop_super_secret_refresh_key_2026_jwt_token',
-    { expiresIn: process.env.JWT_REFRESH_EXPIRY || '7d' }
+    (process.env.JWT_REFRESH_SECRET || 'smartshop_super_secret_refresh_key_2026_jwt_token') as string,
+    { expiresIn: process.env.JWT_REFRESH_EXPIRY || '7d' } as jwt.SignOptions
   );
 };
 
@@ -55,7 +55,6 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
     }
 
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6 digit code
 
     // Transaction to create User, Cart, and Wishlist
     const newUser = await prisma.$transaction(async (tx: any) => {
