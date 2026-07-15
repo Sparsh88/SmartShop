@@ -5,7 +5,6 @@ import ProductCard from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/LoadingSkeleton';
 import { ArrowRight, ShieldCheck, Truck, RotateCcw, Check } from 'lucide-react';
 import HeroCarousel from '../components/HeroCarousel';
-import { motion } from 'framer-motion';
 
 export default function Home() {
   // Query homepage products from Express server

@@ -32,8 +32,9 @@ app.use(helmet({
 }));
 
 // CORS Configuration
+const rawFrontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:5173',
+  rawFrontendUrl.replace(/\/$/, ''),
 ];
 
 app.use(
