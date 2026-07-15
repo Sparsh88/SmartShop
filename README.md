@@ -1,468 +1,190 @@
-# 🛍️ SmartShop AI
+# SmartShop — Premium Full Stack E-Commerce Platform
 
-> **Shop Smarter with AI**
+SmartShop is a modern, responsive, and production-ready Full Stack E-Commerce web application built using clean MVC architecture and industry-standard security safeguards.
 
-SmartShop AI is a **production-ready, full-stack AI-powered e-commerce platform** built with modern web technologies. It combines a premium shopping experience with Artificial Intelligence to deliver intelligent product recommendations, AI-assisted search, image-based product discovery, and a conversational shopping assistant.
+## 🚀 Technology Stack
 
-Designed with scalability, security, and user experience in mind, SmartShop AI demonstrates industry-standard architecture, clean code practices, and real-world software engineering concepts, making it an excellent portfolio project for full-stack developer roles.
+### Frontend
+* **Core**: React 19 (TypeScript), Vite
+* **Styling**: Tailwind CSS, PostCSS (Autoprefixer)
+* **Animation**: Framer Motion
+* **State Management**: Zustand (with local storage persistence and guest modes)
+* **API cache**: React Query (TanStack Query v5)
+* **Forms & Verification**: React Hook Form, Zod schema validations
+* **HTTP Client**: Axios (configured with request token attachers and response silent refresh listeners)
+* **Analytics Charts**: Recharts
 
----
-
-# 🚀 Features
-
-## 🤖 AI-Powered Features
-
-### 🧠 AI Shopping Assistant
-
-* Natural language shopping assistant powered by **Google Gemini AI**
-* Recommends products based on:
-
-  * Budget
-  * Purpose
-  * User requirements
-  * Brand preference
-* Answers product-related questions
-* Compares products
-* Provides buying suggestions
-
-**Examples**
-
-> "Suggest a gaming laptop under ₹80,000."
-
-> "Recommend running shoes."
-
-> "Best headphones for coding."
+### Backend
+* **Runtime & Framework**: Node.js, Express.js (TypeScript)
+* **ORM & Database**: Prisma ORM with Neon PostgreSQL
+* **Authentication**: JSON Web Tokens (Access JWT + HttpOnly Refresh Token Cookie)
+* **Password Hashing**: bcryptjs
+* **Storage & Uploads**: Multer & Cloudinary
+* **Email dispatch**: Nodemailer
+* **Gateway integration**: Razorpay SDK
+* **Security guards**: Helmet headers, Express Rate Limit, CORS constraints
 
 ---
 
-### 🔍 Smart AI Search
+## 📂 Project Structure
 
-Unlike traditional keyword-based search, SmartShop AI understands **user intent**.
-
-If the searched product exists:
-
-* Displays matching products instantly.
-
-If the searched product does **not** exist:
-
-* Gemini AI analyzes the search intent.
-* Suggests the closest available alternatives.
-
-**Example**
-
-Search:
-
-> MacBook
-
-Database contains:
-
-* Dell Laptop
-* HP Laptop
-* Lenovo Laptop
-
-Result:
-
-> "MacBook is currently unavailable. Here are similar premium laptops you may like."
-
----
-
-### 📷 AI Image Search
-
-Users can upload an image of a product.
-
-The AI:
-
-* Identifies the object
-* Understands its category
-* Detects color and style
-* Finds visually similar products available in the store
-
----
-
-# 🛒 Customer Features
-
-* User Registration
-* Secure Login
-* Google OAuth Login
-* JWT Authentication
-* Forgot Password
-* Product Search
-* Category Filters
-* Product Sorting
-* Wishlist
-* Shopping Cart
-* Coupon System
-* Razorpay Payments
-* Order Tracking
-* Order History
-* Reviews & Ratings
-* Responsive Design
-* Dark / Light Theme
-
----
-
-# 👨‍💼 Admin Features
-
-* Interactive Admin Dashboard
-* Product Management
-* Category Management
-* User Management
-* Order Management
-* Coupon Management
-* Inventory Control
-* Revenue Analytics
-* Monthly Sales Reports
-* Low Stock Alerts
-* Customer Insights
-* Top Selling Products
-
----
-
-# 📊 Analytics Dashboard
-
-Built using **Recharts**.
-
-Includes:
-
-* Monthly Revenue
-* Sales Overview
-* Product Performance
-* Category Statistics
-* Top Selling Products
-* Low Stock Monitoring
-
----
-
-# 🌗 Dark & Light Mode
-
-* Fully responsive theme switcher
-* Smooth transitions
-* Theme preference stored in Local Storage
-* Supports every page across the application
-
----
-
-# 🔐 Security
-
-* JWT Authentication
-* Google OAuth
-* Password Hashing (bcrypt)
-* Helmet Security Headers
-* Express Rate Limiter
-* CORS Protection
-* Input Validation
-* Protected Routes
-* Role-Based Authorization
-
----
-
-# 💳 Payments
-
-* Razorpay Integration
-* Secure Order Verification
-* Payment Confirmation
-* Order Invoice
-* Payment Status Tracking
-
----
-
-# 🛠️ Tech Stack
-
-## Frontend
-
-* React.js
-* React Router DOM
-* JavaScript (ES6+)
-* Tailwind CSS
-* HTML5
-* CSS3
-* Axios
-* Context API
-* React Hook Form
-* Recharts
-* Canvas Confetti
-
----
-
-## Backend
-
-* Node.js
-* Express.js
-* REST APIs
-* MongoDB
-* Mongoose
-* JWT Authentication
-* bcrypt.js
-* Multer
-* Cloudinary
-* Express Validator
-* Helmet
-* Express Rate Limit
-* CORS
-
----
-
-## AI & Third-Party Services
-
-* Google Gemini API
-* Razorpay
-* Cloudinary
-* MongoDB Atlas
-
----
-
-# 📁 Project Structure
-
-```
-SmartShop-AI/
-│
+```text
+E-commerce/
 ├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── uploads/
-│   ├── services/
-│   ├── utils/
-│   ├── seed.js
-│   ├── server.js
-│   └── .env.example
-│
-├── frontend/
-│   ├── public/
+│   ├── prisma/
+│   │   └── schema.prisma         # Prisma PostgreSQL data schemas
 │   ├── src/
-│   │
-│   ├── components/
-│   ├── context/
-│   ├── hooks/
-│   ├── layouts/
-│   ├── pages/
-│   ├── services/
-│   ├── utils/
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
-│
-├── package.json
-└── README.md
+│   │   ├── config/               # Database client & Cloudinary initializations
+│   │   ├── controllers/          # Business logic handlers (MVC controllers)
+│   │   ├── middleware/           # Auth validation, Error logging, Upload buffers
+│   │   ├── routes/               # REST endpoint routes mapping
+│   │   ├── utils/                # Custom HTTP errors & Nodemailer email templates
+│   │   ├── index.ts              # Entry point Express server
+│   │   └── seed.ts               # Database pre-population seed script
+│   ├── tsconfig.json
+│   └── package.json
+└── frontend/
+    ├── src/
+    │   ├── components/           # Common layouts (Navbar, Footer), guards, UI elements
+    │   ├── pages/                # Customer storefront pages & Admin console panels
+    │   ├── services/             # Axios API client interceptor configuration
+    │   ├── store/                # Zustand global authentication and cart stores
+    │   ├── App.tsx               # App routing table structure
+    │   ├── main.tsx              # React mounting bootstrap
+    │   └── index.css             # Tailwind style sheets & glassmorphism utilities
+    ├── tailwind.config.js
+    ├── postcss.config.js
+    ├── vite.config.ts
+    └── package.json
 ```
 
 ---
 
-# ⚙️ Installation
+## ⚙️ Installation & Local Setup
 
-## Prerequisites
+To run this project locally, clone the repository and configure the steps below:
 
-* Node.js (v18 or later recommended)
-* MongoDB (Local or Atlas)
-* npm
+### 1. Backend Configuration
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Install the backend dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up the `.env` configuration file by cloning `.env.example` and providing active credentials (e.g. database URL):
+   ```bash
+   cp .env.example .env
+   ```
+4. Generate the Prisma database client:
+   ```bash
+   npx prisma generate
+   ```
+5. Apply database schema migrations:
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+6. Populate the PostgreSQL database with categories, default products, active coupons, and administrator credentials:
+   ```bash
+   npm run seed
+   ```
+7. Start the Express development server:
+   ```bash
+   npm run dev
+   ```
 
----
-
-## 1. Clone Repository
-
-```bash
-git clone <repository-url>
-
-cd SmartShop-AI
-```
-
----
-
-## 2. Install Dependencies
-
-```bash
-npm run install-all
-```
-
----
-
-## 3. Configure Environment Variables
-
-Copy the example file:
-
-```bash
-cp backend/.env.example backend/.env
-```
-
-Update the following values:
-
-* MongoDB URI
-* JWT Secret
-* Gemini API Key
-* Razorpay Keys
-* Cloudinary Credentials
-* Google OAuth Credentials
-
----
-
-## 4. Seed Database
-
-```bash
-npm run seed
-```
-
-This will generate:
-
-* Categories
-* Products
-* Coupons
-* Admin User
-* Customer User
+### 2. Frontend Configuration
+1. Navigate to the frontend directory:
+   ```bash
+   cd ../frontend
+   ```
+2. Install the frontend dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the Vite React development server:
+   ```bash
+   npm run dev
+   ```
+4. Open your browser and navigate to `http://localhost:5173`.
 
 ---
 
-## 5. Run Development Server
+## 🔒 Test Sandbox Login Credentials
 
-Backend
+We have pre-seeded test accounts for verification in development:
 
-```bash
-npm run backend
-```
-
-Frontend
-
-```bash
-npm run frontend
-```
-
-Application URL
-
-```
-http://localhost:5173
-```
+* **Administrator Account**:
+  * **Email**: `admin@smartshop.com`
+  * **Password**: `Password123`
+* **Standard Customer Account**:
+  * **Email**: `customer@smartshop.com`
+  * **Password**: `Password123`
 
 ---
 
-# 🔑 Demo Credentials
+## 🔗 REST API Endpoints Overview
 
-## Administrator
+All backend requests start with `/api`:
 
-**Email**
+### 🔐 Authentication (`/api/auth`)
+* `POST /register` — Register a customer (triggers code mailing and cart setup).
+* `POST /verify` — Submit the 6-digit email confirmation code.
+* `POST /login` — Log in and capture HTTPOnly cookies.
+* `POST /refresh` — Refresh the access token silently.
+* `POST /logout` — Clear session cookies.
+* `POST /forgot-password` — Request a reset link.
+* `POST /reset-password/:token` — Reset account password.
+* `PUT /profile` — Update name, email, or change avatar picture (Supports image upload).
+* `PUT /change-password` — Change password.
 
-```
-admin@smartshop.com
-```
+### 🛍️ Products (`/api/products`)
+* `GET /` — List products with filters, search, and pagination.
+* `GET /home` — Retrievefeatured and trending homepage items.
+* `GET /categories` — List store categories.
+* `GET /brands` — List distinct brands.
+* `GET /:id` — Get product detail specs and related items.
+* `POST /` — Add catalog product (Admin Only - Supports multiple image uploads).
+* `PUT /:id` — Update catalog product specs (Admin Only).
+* `DELETE /:id` — Remove catalog product (Admin Only).
 
-**Password**
+### 🛒 Cart & Wishlist (`/api/cart` & `/api/wishlist`)
+* `GET /cart` — View cart contents.
+* `POST /cart/add` — Add item to cart.
+* `PUT /cart/update` — Edit cart quantities.
+* `DELETE /cart/remove/:productId` — Delete item from cart.
+* `DELETE /cart/clear` — Clear cart.
+* `GET /wishlist` — View liked products.
+* `POST /wishlist/toggle` — Add/remove liked products.
 
-```
-admin123
-```
-
----
-
-## Customer
-
-**Email**
-
-```
-customer@smartshop.com
-```
-
-**Password**
-
-```
-customer123
-```
-
----
-
-# 📡 REST API Endpoints
-
-## Authentication
-
-```
-POST   /api/auth/register
-POST   /api/auth/login
-POST   /api/auth/google
-GET    /api/auth/profile
-PUT    /api/auth/profile
-```
+### 📦 Orders & Payments (`/api/orders` & `/api/payments`)
+* `GET /orders/addresses` — View customer address list.
+* `POST /orders/addresses` — Save new shipping address.
+* `POST /orders/create` — Create order transaction (COD/Razorpay).
+* `GET /orders/my-orders` — View previous orders list.
+* `PUT /orders/cancel/:id` — Request order cancellation.
+* `POST /payments/create-order` — Create Razorpay order credentials.
+* `POST /payments/verify` — Verify capture signature via cryptographic HMAC matching.
 
 ---
 
-## Products
+## 🌩️ Deployment Details
 
-```
-GET    /api/products
-GET    /api/products/:id
-POST   /api/products/visual-search
-POST   /api/products/:id/reviews
-```
+### Backend (Render / Heroku)
+1. Link your git repository to Render.
+2. Select Web Service. Set Environment to `Node`.
+3. Build command: `npm install && npm run build` (Wait: ensure Prisma builds by running `npx prisma generate` in your build command or package.json scripts).
+4. Start command: `npm run start`.
+5. Attach environment variables.
 
----
+### Database (Neon / Supabase)
+1. Create a PostgreSQL server on Neon.
+2. Capture the Connection String.
+3. Attach this to the backend `DATABASE_URL` environment parameter.
 
-## Orders
-
-```
-POST   /api/orders/cod
-POST   /api/orders/razorpay
-POST   /api/orders/verify
-GET    /api/orders/myorders
-PUT    /api/orders/:id/cancel
-```
-
----
-
-## Coupons
-
-```
-GET    /api/coupons
-POST   /api/coupons/validate
-```
-
----
-
-## Administration
-
-```
-GET    /api/admin/analytics
-GET    /api/admin/users
-GET    /api/admin/orders
-GET    /api/admin/products
-```
-
----
-
-# 🌟 Highlights
-
-* Production-ready architecture
-* AI-powered shopping experience
-* Intent-aware intelligent search
-* Image-based product discovery
-* Responsive modern UI
-* JWT & Google OAuth Authentication
-* Razorpay Payment Integration
-* Interactive Analytics Dashboard
-* RESTful API Architecture
-* Dark & Light Theme Support
-* Clean MVC Backend
-* Fully Responsive Design
-
----
-
-# 🚀 Future Enhancements
-
-* Real-time Chat using Socket.io
-* Voice Search
-* AI Review Summarization
-* Product Comparison Tool
-* Personalized Recommendations
-* Progressive Web App (PWA)
-* Email Notifications
-* Push Notifications
-* Multi-Vendor Marketplace
-* Redis Caching
-* Docker & CI/CD Deployment
-
----
-
-# 👨‍💻 Author
-
-**Sparsh Chauhan**
-
-**Full Stack Web Developer**
-
-If you found this project helpful, consider giving it a ⭐ on GitHub.
+### Frontend (Vercel / Netlify)
+1. Link the repository frontend directory to Vercel.
+2. Build command: `npm run build`.
+3. Output directory: `dist`.
+4. Configure `VITE_API_URL` pointing to your hosted Express URL (e.g. `https://smartshop-api.onrender.com/api`).
