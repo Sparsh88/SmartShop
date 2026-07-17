@@ -100,8 +100,11 @@ export const verifyRazorpayPayment = async (req: AuthenticatedRequest, res: Resp
     if (!userId) return next(new BadRequestError('User not authenticated'));
     if (!orderId) return next(new BadRequestError('SmartShop Order ID is required'));
 
-    // Check Order
-    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    // Check Order (selecting only the required fields to optimize database throughput)
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      select: { userId: true, orderNumber: true, payableAmount: true },
+    });
     if (!order) return next(new NotFoundError('Order not found'));
 
     const isMock = process.env.RAZORPAY_KEY_SECRET === 'rzp_test_secret_key_placeholder' || !process.env.RAZORPAY_KEY_SECRET;

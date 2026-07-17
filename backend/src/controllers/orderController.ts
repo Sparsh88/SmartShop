@@ -144,17 +144,18 @@ export const createOrder = async (req: AuthenticatedRequest, res: Response, next
       return next(new BadRequestError('Address ID and payment method are required'));
     }
 
-    // Verify Address belongs to user
-    const address = await prisma.address.findUnique({ where: { id: addressId } });
+    // Parallelize address verification and cart retrieval to save a database round-trip
+    const [address, cart] = await Promise.all([
+      prisma.address.findUnique({ where: { id: addressId } }),
+      prisma.cart.findUnique({
+        where: { userId },
+        include: { items: { include: { product: true } } },
+      }),
+    ]);
+
     if (!address || address.userId !== userId) {
       return next(new BadRequestError('Invalid shipping address'));
     }
-
-    // Fetch Cart
-    const cart = await prisma.cart.findUnique({
-      where: { userId },
-      include: { items: { include: { product: true } } },
-    });
 
     if (!cart || cart.items.length === 0) {
       return next(new BadRequestError('Your shopping cart is empty'));

@@ -79,8 +79,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       if (isAuthenticated) {
-        await api.post('/cart/add', { productId, quantity });
-        await get().fetchCart(true);
+        const res = await api.post('/cart/add', { productId, quantity });
+        const items = res.data.cart?.items || [];
+        set({ items, isLoading: false });
+        get().calculateTotals();
       } else {
         // Guest mode: get product details or add placeholder details
         // To make guest mode completely seamless, we will fetch details if adding
@@ -122,8 +124,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       if (isAuthenticated) {
-        await api.put('/cart/update', { productId, quantity });
-        await get().fetchCart(true);
+        const res = await api.put('/cart/update', { productId, quantity });
+        const items = res.data.cart?.items || [];
+        set({ items, isLoading: false });
+        get().calculateTotals();
       } else {
         const currentItems = [...get().items];
         const idx = currentItems.findIndex((item) => item.productId === productId);
@@ -152,8 +156,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       if (isAuthenticated) {
-        await api.delete(`/cart/remove/${productId}`);
-        await get().fetchCart(true);
+        const res = await api.delete(`/cart/remove/${productId}`);
+        const items = res.data.cart?.items || [];
+        set({ items, isLoading: false });
+        get().calculateTotals();
       } else {
         const currentItems = get().items.filter((item) => item.productId !== productId);
         localStorage.setItem('guestCart', JSON.stringify(currentItems));

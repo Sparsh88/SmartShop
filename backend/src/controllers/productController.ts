@@ -91,8 +91,8 @@ export const getProducts = async (req: Request, res: Response, next: NextFunctio
       }
     }
 
-    // Execute query in transaction to get total counts as well
-    let [products, total] = await prisma.$transaction([
+    // Execute queries concurrently to get total counts as well
+    let [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
         orderBy,
@@ -141,8 +141,8 @@ export const getProducts = async (req: Request, res: Response, next: NextFunctio
           slug: matchedCategorySlug
         };
 
-        // Query again using the category slug fallback
-        const [fallbackProducts, fallbackTotal] = await prisma.$transaction([
+        // Query again concurrently using the category slug fallback
+        const [fallbackProducts, fallbackTotal] = await Promise.all([
           prisma.product.findMany({
             where: synonymWhere,
             orderBy,
@@ -223,17 +223,18 @@ export const getProductById = async (req: Request, res: Response, next: NextFunc
 // 3. GET HOMEPAGE FEATURED & TRENDING PRODUCTS
 export const getFeaturedAndTrendingProducts = async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    const featured = await prisma.product.findMany({
-      where: { isFeatured: true },
-      take: 8,
-      include: { category: true },
-    });
-
-    const trending = await prisma.product.findMany({
-      where: { isTrending: true },
-      take: 8,
-      include: { category: true },
-    });
+    const [featured, trending] = await Promise.all([
+      prisma.product.findMany({
+        where: { isFeatured: true },
+        take: 8,
+        include: { category: true },
+      }),
+      prisma.product.findMany({
+        where: { isTrending: true },
+        take: 8,
+        include: { category: true },
+      }),
+    ]);
 
     res.status(200).json({
       success: true,
