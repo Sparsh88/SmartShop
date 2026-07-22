@@ -83,6 +83,12 @@ model Product {
   reviews       Review[]
   cartItems     CartItem[]
   wishlists     Wishlist[]  @relation("WishlistProducts")
+
+  @@index([isFeatured])
+  @@index([isTrending])
+  @@index([categoryId])
+  @@index([brand])
+  @@index([createdAt])
 }
 
 model Category {

@@ -13,15 +13,16 @@ import {
 import { protect, authorize } from '../middleware/authMiddleware';
 import { Role } from '@prisma/client';
 import { upload } from '../middleware/uploadMiddleware';
+import { cacheControl } from '../middleware/cacheMiddleware';
 
 const router = Router();
 
-// Public Routes
-router.get('/', getProducts);
-router.get('/home', getFeaturedAndTrendingProducts);
-router.get('/categories', getCategories);
-router.get('/brands', getBrands);
-router.get('/:id', getProductById);
+// Public Routes with Edge Caching (s-maxage)
+router.get('/', cacheControl(300), getProducts); // 5 minutes cache
+router.get('/home', cacheControl(600), getFeaturedAndTrendingProducts); // 10 minutes cache
+router.get('/categories', cacheControl(3600), getCategories); // 1 hour cache
+router.get('/brands', cacheControl(3600), getBrands); // 1 hour cache
+router.get('/:id', cacheControl(300), getProductById); // 5 minutes cache
 
 // Admin Protected Routes
 router.post(

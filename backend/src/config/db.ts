@@ -10,6 +10,14 @@ prisma.$use(async (params, next) => {
 
   if (!result) return result;
 
+  // Only apply scaling for models containing products and read/write actions
+  const modelsWithProducts = ['Product', 'CartItem', 'OrderItem', 'Cart', 'Order', 'Review', 'Wishlist'];
+  const actionsToScale = ['findUnique', 'findFirst', 'findMany', 'create', 'update', 'upsert'];
+
+  if (!params.model || !modelsWithProducts.includes(params.model) || !actionsToScale.includes(params.action)) {
+    return result;
+  }
+
   // Deep clone the query result so we are working with standard, mutable plain JS objects.
   // This avoids any 'TypeError: Cannot assign to read-only property' from Prisma model proxies.
   let clonedResult;
