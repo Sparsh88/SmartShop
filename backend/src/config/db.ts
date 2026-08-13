@@ -18,16 +18,7 @@ prisma.$use(async (params, next) => {
     return result;
   }
 
-  // Deep clone the query result so we are working with standard, mutable plain JS objects.
-  // This avoids any 'TypeError: Cannot assign to read-only property' from Prisma model proxies.
-  let clonedResult;
-  try {
-    clonedResult = JSON.parse(JSON.stringify(result));
-  } catch (e) {
-    clonedResult = result;
-  }
-
-  // Helper to recursively scale any product prices found in the result
+  // Fast recursive scaler with shallow copy on mutation to avoid heavy JSON.stringify/parse overhead
   const scaleObject = (obj: any): any => {
     if (!obj || typeof obj !== 'object') return obj;
 
@@ -35,24 +26,31 @@ prisma.$use(async (params, next) => {
       return obj.map(scaleObject);
     }
 
+    if (obj instanceof Date) return obj;
+
     // Check if the object is a Product model (has price, discountPrice, and brand/name fields)
     if (typeof obj.price === 'number' && typeof obj.discountPrice === 'number' && 'brand' in obj) {
-      // Scale by 0.4 (approx 60% reduction to align with Indian market competitive pricing)
-      obj.price = Math.round(obj.price * 0.4);
-      obj.discountPrice = Math.round(obj.discountPrice * 0.4);
+      const cloned = { ...obj };
+      cloned.price = Math.round(obj.price * 0.4);
+      cloned.discountPrice = Math.round(obj.discountPrice * 0.4);
+      for (const key of Object.keys(cloned)) {
+        if (typeof cloned[key] === 'object' && cloned[key] !== null) {
+          cloned[key] = scaleObject(cloned[key]);
+        }
+      }
+      return cloned;
     }
 
-    // Recursively process nested properties (like in CartItem relations, OrderItem relations, etc.)
-    for (const key of Object.keys(obj)) {
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        obj[key] = scaleObject(obj[key]);
+    const copy = { ...obj };
+    for (const key of Object.keys(copy)) {
+      if (typeof copy[key] === 'object' && copy[key] !== null) {
+        copy[key] = scaleObject(copy[key]);
       }
     }
-
-    return obj;
+    return copy;
   };
 
-  return scaleObject(clonedResult);
+  return scaleObject(result);
 });
 
 export default prisma;

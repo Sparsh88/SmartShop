@@ -145,7 +145,7 @@ export default function Home() {
         </div>
 
         {isLoading ? (
-          <ProductGridSkeleton count={3} />
+          <ProductGridSkeleton count={4} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {data?.featured?.map((product: any) => (
@@ -215,7 +215,7 @@ export default function Home() {
         </div>
 
         {isLoading ? (
-          <ProductGridSkeleton count={3} />
+          <ProductGridSkeleton count={4} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {data?.trending?.map((product: any) => (

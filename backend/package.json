@@ -10,8 +10,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "seed": "ts-node src/seed.ts",
-    "seed:coupons": "ts-node src/seed-coupons.ts"
+    "seed": "ts-node src/seed.ts"
   },
   "keywords": [],
   "author": "",

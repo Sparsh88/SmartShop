@@ -17,9 +17,10 @@ import reviewRoutes from './routes/reviewRoutes';
 import adminRoutes from './routes/adminRoutes';
 import couponRoutes from './routes/couponRoutes';
 
-// Import middlewares
+// Import middlewares & db
 import { globalErrorHandler } from './middleware/errorMiddleware';
 import { NotFoundError } from './utils/errors';
+import prisma from './config/db';
 
 dotenv.config();
 
@@ -110,6 +111,15 @@ app.use('*', (req: any, _res: any, next: any) => {
 
 // Global Error Handler Middleware
 app.use(globalErrorHandler);
+
+// Proactively connect to database to eliminate cold start on first user request
+prisma.$connect()
+  .then(() => {
+    console.log('[SmartShop Backend] Database connection pool initialized successfully.');
+  })
+  .catch((err: any) => {
+    console.error('[SmartShop Backend] Database connection initialization warning:', err.message || err);
+  });
 
 // Start server
 app.listen(PORT, () => {

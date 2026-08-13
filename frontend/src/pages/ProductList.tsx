@@ -40,22 +40,24 @@ export default function ProductList() {
     },
   });
 
-  // Fetch categories query
+  // Fetch categories query (cached indefinitely across filter toggles)
   const { data: categoriesData } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await api.get('/products/categories');
       return res.data.categories;
     },
+    staleTime: Infinity,
   });
 
-  // Fetch brands query
+  // Fetch brands query (cached indefinitely across filter toggles)
   const { data: brandsData } = useQuery({
     queryKey: ['brands'],
     queryFn: async () => {
       const res = await api.get('/products/brands');
       return res.data.brands;
     },
+    staleTime: Infinity,
   });
 
   const updateParam = (key: string, value: string) => {

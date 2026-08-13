@@ -36,6 +36,8 @@ import AdminCoupons from './pages/AdminCoupons';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes staleTime to eliminate redundant refetches on page navigation
+      gcTime: 30 * 60 * 1000, // 30 minutes cache retention time
       refetchOnWindowFocus: false,
       retry: 1,
     },

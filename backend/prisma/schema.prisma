@@ -89,6 +89,8 @@ model Product {
   @@index([categoryId])
   @@index([brand])
   @@index([createdAt])
+  @@index([discountPrice])
+  @@index([rating])
 }
 
 model Category {

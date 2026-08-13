@@ -22,6 +22,57 @@ const categoryCreateSchema = z.object({
   image: z.string().optional(),
 });
 
+// Lean selection object for catalog/listing views to reduce DB retrieval overhead & payload size
+const productCardSelect = {
+  id: true,
+  name: true,
+  price: true,
+  discount: true,
+  discountPrice: true,
+  rating: true,
+  stock: true,
+  brand: true,
+  images: true,
+  isFeatured: true,
+  isTrending: true,
+  createdAt: true,
+  category: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+  },
+};
+
+// High-speed In-memory catalog cache with TTL to eliminate database latency on repeat/concurrent reads
+interface CacheEntry<T> {
+  data: T;
+  expiry: number;
+}
+const cache = new Map<string, CacheEntry<any>>();
+
+const getCached = <T>(key: string): T | null => {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiry) {
+    cache.delete(key);
+    return null;
+  }
+  return entry.data;
+};
+
+const setCached = <T>(key: string, data: T, ttlMs: number = 60000): void => {
+  cache.set(key, {
+    data,
+    expiry: Date.now() + ttlMs,
+  });
+};
+
+export const invalidateProductCache = (): void => {
+  cache.clear();
+};
+
 // 1. GET ALL PRODUCTS (WITH FILTERS, SEARCH, SORTING & PAGINATION)
 export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -98,11 +149,7 @@ export const getProducts = async (req: Request, res: Response, next: NextFunctio
         orderBy,
         skip,
         take: limitNum,
-        include: {
-          category: {
-            select: { name: true, slug: true },
-          },
-        },
+        select: productCardSelect,
       }),
       prisma.product.count({ where }),
     ]);
@@ -148,11 +195,7 @@ export const getProducts = async (req: Request, res: Response, next: NextFunctio
             orderBy,
             skip,
             take: limitNum,
-            include: {
-              category: {
-                select: { name: true, slug: true },
-              },
-            },
+            select: productCardSelect,
           }),
           prisma.product.count({ where: synonymWhere }),
         ]);
@@ -223,24 +266,34 @@ export const getProductById = async (req: Request, res: Response, next: NextFunc
 // 3. GET HOMEPAGE FEATURED & TRENDING PRODUCTS
 export const getFeaturedAndTrendingProducts = async (_req: Request, res: Response, next: NextFunction) => {
   try {
+    const cached = getCached<any>('homepage-products');
+    if (cached) {
+      return res.status(200).json(cached);
+    }
+
     const [featured, trending] = await Promise.all([
       prisma.product.findMany({
         where: { isFeatured: true },
         take: 8,
-        include: { category: true },
+        select: productCardSelect,
       }),
       prisma.product.findMany({
         where: { isTrending: true },
         take: 8,
-        include: { category: true },
+        select: productCardSelect,
       }),
     ]);
 
-    res.status(200).json({
+    const payload = {
       success: true,
       featured,
       trending,
-    });
+    };
+
+    // Cache in memory for 2 minutes (120,000 ms)
+    setCached('homepage-products', payload, 120000);
+
+    res.status(200).json(payload);
   } catch (error) {
     next(error);
   }
@@ -291,6 +344,8 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
       },
     });
 
+    invalidateProductCache();
+
     res.status(201).json({
       success: true,
       message: 'Product created successfully',
@@ -337,6 +392,8 @@ export const updateProduct = async (req: Request, res: Response, next: NextFunct
       },
     });
 
+    invalidateProductCache();
+
     res.status(200).json({
       success: true,
       message: 'Product updated successfully',
@@ -359,6 +416,8 @@ export const deleteProduct = async (req: Request, res: Response, next: NextFunct
 
     await prisma.product.delete({ where: { id } });
 
+    invalidateProductCache();
+
     res.status(200).json({
       success: true,
       message: 'Product deleted successfully',
@@ -371,14 +430,23 @@ export const deleteProduct = async (req: Request, res: Response, next: NextFunct
 // 7. GET ALL CATEGORIES
 export const getCategories = async (_req: Request, res: Response, next: NextFunction) => {
   try {
+    const cached = getCached<any>('all-categories');
+    if (cached) {
+      return res.status(200).json(cached);
+    }
+
     const categories = await prisma.category.findMany({
       orderBy: { name: 'asc' },
     });
 
-    res.status(200).json({
+    const payload = {
       success: true,
       categories,
-    });
+    };
+
+    setCached('all-categories', payload, 300000); // 5 minutes TTL
+
+    res.status(200).json(payload);
   } catch (error) {
     next(error);
   }
@@ -387,15 +455,24 @@ export const getCategories = async (_req: Request, res: Response, next: NextFunc
 // 8. GET ALL BRANDS
 export const getBrands = async (_req: Request, res: Response, next: NextFunction) => {
   try {
+    const cached = getCached<any>('all-brands');
+    if (cached) {
+      return res.status(200).json(cached);
+    }
+
     const brands = await prisma.product.findMany({
       select: { brand: true },
       distinct: ['brand'],
     });
 
-    res.status(200).json({
+    const payload = {
       success: true,
       brands: brands.map((b: any) => b.brand),
-    });
+    };
+
+    setCached('all-brands', payload, 300000); // 5 minutes TTL
+
+    res.status(200).json(payload);
   } catch (error) {
     next(error);
   }
@@ -427,6 +504,8 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
         image: imageUrl,
       },
     });
+
+    invalidateProductCache();
 
     res.status(201).json({
       success: true,
