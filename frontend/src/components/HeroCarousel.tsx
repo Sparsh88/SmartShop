@@ -82,9 +82,9 @@ export default function HeroCarousel() {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(nextSlide, 5000);
+    const timer = setInterval(nextSlide, 3000);
     return () => clearInterval(timer);
-  }, [nextSlide]);
+  }, [nextSlide, current]);
 
   const slideVariants = {
     enter: (dir: number) => ({
