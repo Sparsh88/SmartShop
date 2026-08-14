@@ -25,7 +25,7 @@ import prisma from './config/db';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT) || 5000;
 
 // Security Middlewares
 app.use(helmet({
@@ -33,26 +33,70 @@ app.use(helmet({
 }));
 
 // CORS Configuration
-const rawFrontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-const allowedOrigins = [
-  rawFrontendUrl.replace(/\/$/, ''),
+const frontendEnv = process.env.FRONTEND_URL || process.env.CLIENT_URL || '';
+const configuredOrigins = frontendEnv
+  .split(',')
+  .map((url) => url.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
+const defaultAllowedOrigins = [
+  'https://smart-shop-ten-nu.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000',
 ];
+
+const allowedOrigins = Array.from(new Set([...configuredOrigins, ...defaultAllowedOrigins]));
 
 app.use(
   cors({
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      // Allow requests with no origin (like mobile apps, curl, postman)
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      // Allow requests with no origin (like mobile apps, curl, postman, server-to-server)
+      if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        // Log CORS block for diagnosis and return false rather than unhandled exception
+        console.warn(`[CORS] Request from origin ${origin} not in allowed list:`, allowedOrigins);
+        callback(null, false);
       }
     },
     credentials: true,
   })
 );
 
-// Rate Limiter
+// Public Root & Health Check Endpoints (placed before rate limiter so health checks never fail or throttle)
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    success: true,
+    message: 'SmartShop Backend API is running',
+    environment: process.env.NODE_ENV || 'production',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get('/health', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    success: true,
+    message: 'SmartShop API is healthy',
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    success: true,
+    message: 'SmartShop API is healthy',
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Rate Limiter for general API routes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 200, // limit each IP to 200 requests per windowMs
@@ -112,6 +156,15 @@ app.use('*', (req: any, _res: any, next: any) => {
 // Global Error Handler Middleware
 app.use(globalErrorHandler);
 
+// Process-level diagnostic error listeners
+process.on('unhandledRejection', (reason: any) => {
+  console.error('[SmartShop Backend] Unhandled Rejection:', reason);
+});
+
+process.on('uncaughtException', (error: Error) => {
+  console.error('[SmartShop Backend] Uncaught Exception:', error);
+});
+
 // Proactively connect to database to eliminate cold start on first user request
 prisma.$connect()
   .then(() => {
@@ -121,7 +174,7 @@ prisma.$connect()
     console.error('[SmartShop Backend] Database connection initialization warning:', err.message || err);
   });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`[SmartShop Backend] Server is running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+// Start server with 0.0.0.0 binding for container/cloud platforms
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`[SmartShop Backend] Server is running in ${process.env.NODE_ENV || 'production'} mode on port ${PORT}`);
 });
