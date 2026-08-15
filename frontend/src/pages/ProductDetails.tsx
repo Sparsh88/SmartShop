@@ -8,10 +8,12 @@ import { useWishlistStore } from '../store/wishlistStore';
 import { toast } from '../store/toastStore';
 import { ProductDetailSkeleton } from '../components/LoadingSkeleton';
 import ImageZoom from '../components/ImageZoom';
-import ProductCard from '../components/ProductCard';
 import { Star, ShoppingCart, Heart, Plus, Minus, Send } from 'lucide-react';
 import { fixProductImage } from '../utils/imageHelper';
 import { formatPrice } from '../utils/priceHelper';
+import RecommendationSection from '../components/RecommendationSection';
+import { recommendationApi } from '../services/recommendationApi';
+import { useEffect } from 'react';
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
@@ -26,7 +28,14 @@ export default function ProductDetails() {
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
 
-  // Fetch product details & related products
+  // Track product view for recommendation engine
+  useEffect(() => {
+    if (id) {
+      recommendationApi.track(id, 'VIEW');
+    }
+  }, [id]);
+
+  // Fetch product details
   const { data, isLoading, error } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
@@ -55,7 +64,6 @@ export default function ProductDetails() {
   });
 
   const product = data?.product;
-  const relatedProducts = data?.relatedProducts || [];
   const inWishlist = wishlistItems.some((p) => p.id === product?.id);
 
   const handleAddToCart = async () => {
@@ -356,16 +364,17 @@ export default function ProductDetails() {
 
       </section>
 
-      {/* RELATED PRODUCTS */}
-      {relatedProducts.length > 0 && (
-        <section className="border-t border-slate-850 pt-10">
-          <h2 className="text-2xl font-black font-display text-white mb-6">Related Products</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map((p: any) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
+      {/* AI-POWERED RELATED RECOMMENDATIONS */}
+      {id && (
+        <div className="border-t border-slate-850 pt-10">
+          <RecommendationSection
+            title="Because You Viewed This"
+            subtitle="Intelligent suggestions based on category, specs, and similarity"
+            type="related"
+            productId={id}
+            limit={4}
+          />
+        </div>
       )}
 
     </div>

@@ -3,8 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import ProductCard from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/LoadingSkeleton';
-import { SlidersHorizontal, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { SlidersHorizontal, ArrowUpDown, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useState } from 'react';
+
 
 export default function ProductList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,7 +39,9 @@ export default function ProductList() {
       });
       return res.data;
     },
+    staleTime: 60 * 1000,
   });
+
 
   // Fetch categories query (cached indefinitely across filter toggles)
   const { data: categoriesData } = useQuery({
@@ -240,11 +243,21 @@ export default function ProductList() {
             </div>
           ) : (
             <>
+              {data?.searchMessage && (
+                <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-2xl p-4 flex items-center gap-3 text-indigo-200 text-sm shadow-sm backdrop-blur-sm animate-pulse-slow">
+                  <Sparkles className="text-indigo-400 shrink-0" size={20} />
+                  <div>
+                    <span className="font-semibold text-white">{data.searchMessage}</span>
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data?.products?.map((product: any) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
+
 
               {/* PAGINATION CONTROLS */}
               {data?.pagination?.totalPages > 1 && (

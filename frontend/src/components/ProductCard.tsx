@@ -4,8 +4,9 @@ import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import { useWishlistStore } from '../store/wishlistStore';
 import { toast } from '../store/toastStore';
-import { fixProductImage } from '../utils/imageHelper';
+import { fixProductImage, getDefaultFallbackImage } from '../utils/imageHelper';
 import { formatPrice } from '../utils/priceHelper';
+
 
 interface ProductCardProps {
   product: {
@@ -63,7 +64,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const imageUrl = fixProductImage(product.images?.[0], product.name);
 
   return (
-    <div className="group relative bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:border-slate-700 flex flex-col h-full hover-translate-up spring-active">
+    <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg dark:shadow-md dark:hover:shadow-xl transition-all duration-300 hover:border-orange-300 dark:hover:border-slate-700 flex flex-col h-full hover-translate-up spring-active">
       {/* Wishlist Icon Overlay */}
       <button
         onClick={handleToggleWishlist}
@@ -88,9 +89,13 @@ export default function ProductCard({ product }: ProductCardProps) {
         <img
           src={imageUrl}
           alt={product.name}
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = getDefaultFallbackImage(product.name);
+          }}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
+
         {product.stock <= 0 && (
           <div className="absolute inset-0 bg-slate-950/80 flex items-center justify-center">
             <span className="text-rose-400 font-display font-bold uppercase tracking-wider text-xs border border-rose-800/40 px-3 py-1 rounded">

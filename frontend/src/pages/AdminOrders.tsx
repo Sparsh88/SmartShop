@@ -3,7 +3,7 @@ import api from '../services/api';
 import AdminSidebar from '../components/AdminSidebar';
 import { toast } from '../store/toastStore';
 import { formatPrice } from '../utils/priceHelper';
-import { ShoppingBag, Eye, X } from 'lucide-react';
+import { Eye, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function AdminOrders() {
@@ -41,23 +41,6 @@ export default function AdminOrders() {
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
     updateStatusMutation.mutate({ id: orderId, status: newStatus });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-      case 'PROCESSING':
-        return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-      case 'SHIPPED':
-        return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-      case 'DELIVERED':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-      case 'CANCELLED':
-        return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
-      default:
-        return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
-    }
   };
 
   return (

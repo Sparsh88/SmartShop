@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import api from '../services/api';
+import { recommendationApi } from '../services/recommendationApi';
 
 export interface CartItem {
   id: string;
@@ -111,6 +112,9 @@ export const useCartStore = create<CartState>((set, get) => ({
         set({ items: currentItems, isLoading: false });
         get().calculateTotals();
       }
+
+      // Asynchronously track CART interaction
+      recommendationApi.track(productId, 'CART');
     } catch (err: any) {
       set({
         isLoading: false,
@@ -166,6 +170,9 @@ export const useCartStore = create<CartState>((set, get) => ({
         set({ items: currentItems, isLoading: false });
         get().calculateTotals();
       }
+
+      // Asynchronously track REMOVE_FROM_CART interaction
+      recommendationApi.track(productId, 'REMOVE_FROM_CART');
     } catch (err: any) {
       set({
         isLoading: false,

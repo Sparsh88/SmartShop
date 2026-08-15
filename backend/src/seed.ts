@@ -20,46 +20,35 @@ async function main() {
   await prisma.coupon.deleteMany();
   await prisma.user.deleteMany();
 
-  // 2. Hash default passwords
-  const hashedPassword = await bcrypt.hash('Password123', 10);
+  // 2. Hash administrator password
+  const adminHashedPassword = await bcrypt.hash('Sp@080806', 10);
 
-  // 3. Create test users
+  // 3. Create administrator user
   const admin = await prisma.user.create({
     data: {
-      name: 'SmartShop Admin',
-      email: 'admin@smartshop.com',
-      password: hashedPassword,
+      name: 'Sparsh Chauhan',
+      email: 'sparshchauhan050@gmail.com',
+      password: adminHashedPassword,
       role: Role.ADMIN,
       isVerified: true,
     },
   });
 
-  const customer = await prisma.user.create({
-    data: {
-      name: 'John Doe',
-      email: 'customer@smartshop.com',
-      password: hashedPassword,
-      role: Role.CUSTOMER,
-      isVerified: true,
-    },
-  });
-
-  // Create initial cart and wishlist for customer
+  // Create initial cart and wishlist for admin
   await prisma.cart.create({
     data: {
-      userId: customer.id,
+      userId: admin.id,
     },
   });
 
   await prisma.wishlist.create({
     data: {
-      userId: customer.id,
+      userId: admin.id,
     },
   });
 
-  console.log('Created test users:', {
+  console.log('Seeded Administrator User:', {
     admin: admin.email,
-    customer: customer.email,
   });
 
   // 4. Create categories

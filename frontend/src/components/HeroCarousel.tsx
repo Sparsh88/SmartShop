@@ -109,7 +109,7 @@ export default function HeroCarousel() {
   const activeSlide = slides[current];
 
   return (
-    <section className="relative w-full h-[520px] md:h-[600px] bg-neutral-950 overflow-hidden select-none border-b border-neutral-900">
+    <section className="relative w-full h-[520px] md:h-[600px] bg-neutral-950 overflow-hidden select-none -mt-16">
       
       {/* Background Slides */}
       <div className="absolute inset-0 w-full h-full">
@@ -140,8 +140,8 @@ export default function HeroCarousel() {
       </div>
 
       {/* Floating Animated Gradients */}
-      <div className="absolute top-10 left-1/4 w-72 h-72 bg-indigo-500/15 rounded-full blur-[120px] pointer-events-none z-10 animate-pulse" />
-      <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-purple-500/15 rounded-full blur-[130px] pointer-events-none z-10 animate-pulse" />
+      <div className="absolute top-10 left-1/4 w-72 h-72 bg-orange-500/15 rounded-full blur-[120px] pointer-events-none z-10 animate-pulse" />
+      <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-amber-500/15 rounded-full blur-[130px] pointer-events-none z-10 animate-pulse" />
 
       {/* Slide Content Overlay */}
       <div className="absolute inset-0 flex items-center justify-center z-25 px-4 sm:px-6 lg:px-8">
@@ -157,15 +157,15 @@ export default function HeroCarousel() {
             >
               {/* Offer Badge */}
               <div>
-                <span className="inline-flex items-center text-xs uppercase tracking-widest text-indigo-400 font-bold bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-full backdrop-blur-md">
+                <span className="inline-flex items-center text-xs uppercase tracking-widest text-orange-300 font-bold bg-orange-500/10 border border-orange-500/30 px-4 py-2 rounded-full backdrop-blur-md">
                   {activeSlide.badge}
                 </span>
               </div>
 
               {/* Title & Highlight */}
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black font-display tracking-tight text-neutral-50 leading-tight">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black font-display tracking-tight text-white leading-tight">
                 {activeSlide.title} <br />
-                <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 bg-clip-text text-transparent">
+                <span className="text-white drop-shadow-[0_2px_16px_rgba(251,146,60,0.5)]">
                   {activeSlide.highlight}
                 </span>
               </h1>
@@ -179,7 +179,7 @@ export default function HeroCarousel() {
               <div className="pt-4">
                 <Link
                   to={activeSlide.link}
-                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-neutral-50 font-semibold px-8 py-4 rounded-full shadow-xl shadow-indigo-500/20 transition-all hover:scale-105 active:scale-95"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-8 py-4 rounded-full shadow-xl shadow-orange-500/30 transition-all hover:scale-105 active:scale-95"
                 >
                   {activeSlide.buttonText}
                   <ArrowRight size={18} />
@@ -213,7 +213,7 @@ export default function HeroCarousel() {
             key={idx}
             onClick={() => handleDotClick(idx)}
             className={`h-2.5 rounded-full transition-all duration-300 ${
-              current === idx ? 'w-8 bg-indigo-500 shadow-md shadow-indigo-500/30' : 'w-2.5 bg-neutral-700 hover:bg-neutral-500'
+              current === idx ? 'w-8 bg-orange-500 shadow-md shadow-orange-500/40' : 'w-2.5 bg-neutral-700 hover:bg-neutral-500'
             }`}
             aria-label={`Go to slide ${idx + 1}`}
           />

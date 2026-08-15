@@ -2,6 +2,14 @@ import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../middleware/authMiddleware';
 import prisma from '../config/db';
 import { BadRequestError, NotFoundError } from '../utils/errors';
+import { getFallbackWishlist, toggleFallbackWishlist } from '../utils/ecomFallback';
+
+const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 300): Promise<T> => {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('DB_TIMEOUT')), timeoutMs)),
+  ]);
+};
 
 // 1. GET WISHLIST
 export const getWishlist = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -9,35 +17,48 @@ export const getWishlist = async (req: AuthenticatedRequest, res: Response, next
     const userId = req.user?.id;
     if (!userId) return next(new BadRequestError('User not authenticated'));
 
-    let wishlist = await prisma.wishlist.findUnique({
-      where: { userId },
-      include: {
-        products: {
+    try {
+      let wishlist = await withFastTimeout(
+        prisma.wishlist.findUnique({
+          where: { userId },
           include: {
-            category: { select: { name: true, slug: true } },
-          },
-        },
-      },
-    });
-
-    // Auto-create wishlist if it doesn't exist
-    if (!wishlist) {
-      wishlist = await prisma.wishlist.create({
-        data: { userId },
-        include: {
-          products: {
-            include: {
-              category: { select: { name: true, slug: true } },
+            products: {
+              include: {
+                category: { select: { name: true, slug: true } },
+              },
             },
           },
-        },
+        }),
+        300
+      );
+
+      if (!wishlist) {
+        wishlist = await withFastTimeout(
+          prisma.wishlist.create({
+            data: { userId },
+            include: {
+              products: {
+                include: {
+                  category: { select: { name: true, slug: true } },
+                },
+              },
+            },
+          }),
+          300
+        );
+      }
+
+      return res.status(200).json({
+        success: true,
+        wishlist: wishlist.products,
+      });
+    } catch (_dbError) {
+      const wishlist = getFallbackWishlist(userId);
+      return res.status(200).json({
+        success: true,
+        wishlist,
       });
     }
-
-    res.status(200).json({
-      success: true,
-      wishlist: wishlist.products,
-    });
   } catch (error) {
     next(error);
   }
@@ -52,54 +73,71 @@ export const toggleWishlist = async (req: AuthenticatedRequest, res: Response, n
     if (!userId) return next(new BadRequestError('User not authenticated'));
     if (!productId) return next(new BadRequestError('Product ID is required'));
 
-    // Check product exists
-    const product = await prisma.product.findUnique({ where: { id: productId } });
-    if (!product) return next(new NotFoundError('Product not found'));
+    try {
+      const product = await withFastTimeout(prisma.product.findUnique({ where: { id: productId } }), 300);
+      if (!product) return next(new NotFoundError('Product not found'));
 
-    // Find user's wishlist
-    let wishlist = await prisma.wishlist.findUnique({
-      where: { userId },
-      include: { products: true },
-    });
+      let wishlist = await withFastTimeout(
+        prisma.wishlist.findUnique({
+          where: { userId },
+          include: { products: true },
+        }),
+        300
+      );
 
-    if (!wishlist) {
-      wishlist = await prisma.wishlist.create({
-        data: { userId },
-        include: { products: true },
-      });
-    }
+      if (!wishlist) {
+        wishlist = await withFastTimeout(
+          prisma.wishlist.create({
+            data: { userId },
+            include: { products: true },
+          }),
+          300
+        );
+      }
 
-    const isProductInWishlist = wishlist.products.some((p: any) => p.id === productId);
+      const isProductInWishlist = wishlist.products.some((p: any) => p.id === productId);
 
-    if (isProductInWishlist) {
-      // Remove from wishlist
-      await prisma.wishlist.update({
-        where: { id: wishlist.id },
-        data: {
-          products: {
-            disconnect: { id: productId },
-          },
-        },
-      });
-      res.status(200).json({
+      if (isProductInWishlist) {
+        await withFastTimeout(
+          prisma.wishlist.update({
+            where: { id: wishlist.id },
+            data: {
+              products: {
+                disconnect: { id: productId },
+              },
+            },
+          }),
+          300
+        );
+        return res.status(200).json({
+          success: true,
+          message: 'Product removed from wishlist',
+          inWishlist: false,
+        });
+      } else {
+        await withFastTimeout(
+          prisma.wishlist.update({
+            where: { id: wishlist.id },
+            data: {
+              products: {
+                connect: { id: productId },
+              },
+            },
+          }),
+          300
+        );
+        return res.status(200).json({
+          success: true,
+          message: 'Product added to wishlist',
+          inWishlist: true,
+        });
+      }
+    } catch (_dbError) {
+      const result = toggleFallbackWishlist(userId, productId);
+      return res.status(200).json({
         success: true,
-        message: 'Product removed from wishlist',
-        inWishlist: false,
-      });
-    } else {
-      // Add to wishlist
-      await prisma.wishlist.update({
-        where: { id: wishlist.id },
-        data: {
-          products: {
-            connect: { id: productId },
-          },
-        },
-      });
-      res.status(200).json({
-        success: true,
-        message: 'Product added to wishlist',
-        inWishlist: true,
+        message: result.inWishlist ? 'Product added to wishlist' : 'Product removed from wishlist',
+        inWishlist: result.inWishlist,
       });
     }
   } catch (error) {

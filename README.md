@@ -10,10 +10,6 @@ A modern full-stack e-commerce web application featuring role-based authenticati
 - **Backend API:** [https://smartshop-backend-kvyp.onrender.com](https://smartshop-backend-kvyp.onrender.com)
 - **GitHub Repository:** [https://github.com/Sparsh88/SmartShop](https://github.com/Sparsh88/SmartShop)
 
-> **Demo Credentials:**
-> - **Admin:** `admin@smartshop.com` / `Password123`
-> - **Customer:** `customer@smartshop.com` / `Password123`
-
 ---
 
 ## Overview
@@ -44,6 +40,7 @@ The system emphasizes transaction integrity through atomic stock deductions duri
 - **Dual Payment Workflow:** Cash on Delivery (COD) and Razorpay integration with HMAC-SHA256 signature verification and sandbox mock fallback.
 - **Order Lifecycle Management:** Complete status progression (`PENDING` → `PROCESSING` → `SHIPPED` → `DELIVERED` → `CANCELLED`) with automatic inventory restoration on cancellation.
 - **Customer Reviews & Ratings:** Verified buyer reviews (1–5 stars) with automatic recalculation of average product ratings.
+- **AI-Powered Product Recommendation Engine:** Hybrid recommendation system combining PostgreSQL candidate retrieval, Google Gemini AI structured ranking, contextual user-facing explanations, and a resilient deterministic heuristic fallback.
 - **Admin Analytics Portal:** Interactive revenue charts (Recharts) over 6 months, order status distribution, product CRUD with Cloudinary image upload, and user status controls.
 
 ---
@@ -60,6 +57,7 @@ The system emphasizes transaction integrity through atomic stock deductions duri
 | Backend Runtime | Node.js, Express.js, TypeScript | RESTful API architecture with typed controllers, routes, and middleware |
 | Database & ORM | PostgreSQL (Neon Cloud), Prisma ORM | Relational data modeling, migrations, foreign keys, and atomic queries |
 | Payment Gateway | Razorpay SDK | Order creation, webhook/signature verification, and sandbox mode |
+| AI / LLM Engine | Google Gemini API (`@google/generative-ai`) | Structured JSON candidate re-ranking and contextual product reasoning |
 | Cloud Storage | Cloudinary, Multer | Product image upload with local filesystem fallback |
 | Analytics | Recharts | Sales trends, revenue breakdowns, and order distribution charts |
 | Deployment | Vercel (Frontend), Render (Backend) | Cloud hosting with automated deployment pipelines |
@@ -97,6 +95,79 @@ Express.js API Server (Node.js + TypeScript)
 4. **Order Placement & Payment:** For Razorpay, backend creates order; client completes checkout; backend validates HMAC-SHA256 signature and atomically deducts stock.
 5. **Order Tracking:** Customer tracks order status milestones (`PENDING` → `PROCESSING` → `SHIPPED` → `DELIVERED`).
 6. **Admin Operations:** Admin logs in to view revenue analytics, manage product inventory, update order statuses, and create promo coupons.
+
+---
+
+## 🤖 AI-Powered Recommendations
+
+SmartShop integrates an intelligent, production-ready hybrid recommendation engine powered by **Google Gemini API** (`gemini-1.5-flash`) and a high-performance **PostgreSQL heuristic fallback**.
+
+```mermaid
+graph TD
+    UserClient[React 18 Frontend Client] -->|Track Interaction / Request Recommendations| API[Express.js REST API]
+    API -->|Optional Auth| AuthMW[Auth Middleware (User Token or Guest Session)]
+    AuthMW --> RecController[Recommendation Controller]
+
+    subgraph Recommendation Pipeline
+        RecController --> Cache[In-Memory Cache (TTL 10-30m)]
+        Cache -->|Cache Miss| RecService[Recommendation Service]
+        RecService -->|Fetch User History & Candidates| DB[(PostgreSQL Database)]
+
+        RecService --> CandidateFilter[Candidate Filtering & Stock Guard]
+        CandidateFilter --> CheckAI{Gemini API Key Available?}
+
+        CheckAI -->|Yes| GeminiCall[Google Gemini 1.5 Flash (Structured JSON)]
+        CheckAI -->|No / Timeout / Error| FallbackRanker[Deterministic Multi-Factor Ranker]
+
+        GeminiCall -->|Validate with Zod| ValidateAI[Sanitize AI Output against Real Candidate IDs]
+        ValidateAI -->|Success| CombineResults[Merge Products + AI Reasons]
+        ValidateAI -->|Fail / Invalid| FallbackRanker
+        FallbackRanker --> CombineResults
+    end
+
+    CombineResults --> SaveCache[Save to Cache]
+    SaveCache --> RecController
+    RecController --> UserClient
+```
+
+### Key Highlights & Engineering Safeguards
+
+1. **Hybrid Architecture (No Database Dumps to LLM):**
+   - The system never sends full database dumps to the AI model.
+   - PostgreSQL queries filter a lean candidate pool (same category, brand affinity, price bracket ±40%, top ratings, user recency).
+   - Only minimal product metadata (ID, name, category, brand, price, rating) is passed to the Gemini model for semantic ranking and human-readable reasoning.
+
+2. **Strict Structured JSON & Hallucination Defense:**
+   - Enforces `responseMimeType: "application/json"` with strict Zod validation.
+   - AI-generated product IDs are cross-checked against the real candidate pool to reject any hallucinated IDs.
+   - Core product data (pricing, inventory, images, names) is always sourced directly from PostgreSQL—never trusted from LLM text output.
+
+3. **100% Guaranteed Uptime & Deterministic Fallback:**
+   - If `GEMINI_API_KEY` is missing, API quota is exceeded, or the AI service times out (3.5s limit), the system automatically triggers a multi-factor heuristic ranking algorithm:
+     - **Category Affinity:** +0.35 weight
+     - **Price Proximity:** +0.25 weight
+     - **Rating & Popularity:** +0.25 weight
+     - **Brand & Trending Recency:** +0.15 weight
+   - The user never encounters an error due to external AI service latency or failure.
+
+4. **Guest & Authenticated User Support with Privacy Safeguards:**
+   - Authenticated users receive personalized recommendations based on past orders, cart, wishlist, and interaction history.
+   - Guest users receive session-based recommendations tracked via an anonymous, pseudo-anonymous `smartshop_session_id` stored in client `localStorage`.
+   - Zero sensitive personal information (PII) or authentication tokens are ever sent to the AI service.
+
+5. **In-Memory Caching & Performance:**
+   - Personalized recommendations are cached for **10 minutes**.
+   - Product detail page recommendations are cached for **20 minutes**.
+   - Edge and memory caches eliminate redundant LLM API calls and database round-trips.
+
+### Recommendation Endpoints
+
+| Method | Endpoint | Description | Auth Level |
+|---|---|---|---|
+| `GET` | `/api/recommendations` | Personalized recommendations for homepage / account | Public / Optional JWT |
+| `GET` | `/api/recommendations/product/:productId` | Contextual recommendations related to viewed item | Public / Optional JWT |
+| `GET` | `/api/recommendations/cart` | Complementary items tailored to current cart contents | Public / Optional JWT |
+| `POST` | `/api/recommendations/track` | Track user events (`VIEW`, `CART`, `WISHLIST`, `PURCHASE`) | Public / Optional JWT |
 
 ---
 
@@ -168,7 +239,9 @@ RAZORPAY_KEY_SECRET=""
 CLOUDINARY_CLOUD_NAME=""
 CLOUDINARY_API_KEY=""
 CLOUDINARY_API_SECRET=""
+GEMINI_API_KEY="your_gemini_api_key_here"
 ```
+
 
 Run database migrations and seed data:
 

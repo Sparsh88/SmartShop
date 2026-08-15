@@ -26,10 +26,14 @@ export default function ImageZoom({ src, alt }: ImageZoomProps) {
       <img
         src={src}
         alt={alt}
+        onError={(e) => {
+          (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600';
+        }}
         className={`w-full h-full object-cover transition-opacity duration-300 ${
           showMagnifier ? 'opacity-0' : 'opacity-100'
         }`}
       />
+
 
       {showMagnifier && (
         <div

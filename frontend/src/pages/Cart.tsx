@@ -7,6 +7,7 @@ import { fixProductImage } from '../utils/imageHelper';
 import { formatPrice } from '../utils/priceHelper';
 import api from '../services/api';
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, Ticket, Check, X } from 'lucide-react';
+import RecommendationSection from '../components/RecommendationSection';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -356,6 +357,18 @@ export default function Cart() {
         </div>
 
       </div>
+
+      {/* COMPLEMENTARY RECOMMENDATIONS */}
+      <div className="mt-16 pt-10 border-t border-slate-850">
+        <RecommendationSection
+          title="Complete Your Purchase"
+          subtitle="Frequently paired items and trending accessories tailored to your cart"
+          type="cart"
+          limit={4}
+          showViewAll={false}
+        />
+      </div>
     </div>
   );
 }
+

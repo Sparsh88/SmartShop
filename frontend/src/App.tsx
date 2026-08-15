@@ -55,10 +55,10 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
+        <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-orange-500 selection:text-white">
           <Navbar />
 
-          <div className="flex-grow">
+          <div className="flex-grow pt-16">
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Home />} />

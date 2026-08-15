@@ -37,6 +37,14 @@ enum DiscountType {
   FLAT
 }
 
+enum InteractionType {
+  VIEW
+  CART
+  REMOVE_FROM_CART
+  WISHLIST
+  PURCHASE
+}
+
 model User {
   id                   String         @id @default(uuid())
   email                String         @unique
@@ -58,6 +66,7 @@ model User {
   orders               Order[]
   reviews              Review[]
   notifications        Notification[]
+  interactions         UserProductInteraction[]
 }
 
 model Product {
@@ -83,6 +92,7 @@ model Product {
   reviews       Review[]
   cartItems     CartItem[]
   wishlists     Wishlist[]  @relation("WishlistProducts")
+  interactions  UserProductInteraction[]
 
   @@index([isFeatured])
   @@index([isTrending])
@@ -230,3 +240,22 @@ model Notification {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model UserProductInteraction {
+  id              String          @id @default(uuid())
+  userId          String?
+  sessionId       String?         // Anonymous session ID for guests
+  productId       String
+  interactionType InteractionType
+  createdAt       DateTime        @default(now())
+
+  user            User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([productId])
+  @@index([interactionType])
+  @@index([createdAt])
+}
+

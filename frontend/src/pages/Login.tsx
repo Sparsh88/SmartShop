@@ -34,6 +34,8 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
+
+
   const onSubmit = async (data: LoginFields) => {
     try {
       await login(data.email, data.password);
@@ -164,12 +166,14 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 bg-indigo-650 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition"
+              className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition"
             >
               Sign In <LogIn size={16} />
             </button>
           </form>
         )}
+
+
 
         {/* Form Footer */}
         {!forgotMode && (

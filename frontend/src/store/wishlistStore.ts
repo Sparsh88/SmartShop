@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import api from '../services/api';
+import { recommendationApi } from '../services/recommendationApi';
 
 export interface WishlistProduct {
   id: string;
@@ -61,6 +62,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         
         if (inWishlist) {
           set((state) => ({ products: [...state.products, product], isLoading: false }));
+          recommendationApi.track(product.id, 'WISHLIST');
         } else {
           set((state) => ({
             products: state.products.filter((p) => p.id !== product.id),
@@ -77,6 +79,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
           updatedProducts = currentProducts.filter((p) => p.id !== product.id);
         } else {
           updatedProducts = [...currentProducts, product];
+          recommendationApi.track(product.id, 'WISHLIST');
         }
 
         localStorage.setItem('guestWishlist', JSON.stringify(updatedProducts));
