@@ -41,8 +41,11 @@ export default function Login() {
       await login(data.email, data.password);
       toast.success('Welcome back!');
       
+      const currentUser = useAuthStore.getState().user;
       if (redirectUrl === 'checkout') {
         navigate('/checkout');
+      } else if (currentUser?.role === 'ADMIN') {
+        navigate('/admin');
       } else {
         navigate('/');
       }

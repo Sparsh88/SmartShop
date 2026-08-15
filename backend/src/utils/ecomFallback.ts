@@ -277,3 +277,26 @@ export const updateFallbackOrderPayment = (
   }
   return order;
 };
+
+export const getAllFallbackOrders = (): FallbackOrder[] => {
+  return [...globalOrders];
+};
+
+export const updateFallbackOrderStatus = (
+  orderId: string,
+  status: 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED',
+  paymentStatus?: 'PENDING' | 'COMPLETED' | 'FAILED'
+): FallbackOrder | undefined => {
+  const order = getFallbackOrderById(orderId);
+  if (order) {
+    order.status = status;
+    if (status === 'DELIVERED') {
+      order.paymentStatus = 'COMPLETED';
+    } else if (paymentStatus) {
+      order.paymentStatus = paymentStatus;
+    }
+  }
+  return order;
+};
+
+
