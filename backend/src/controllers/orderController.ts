@@ -6,6 +6,7 @@ import { OrderStatus, PaymentStatus } from '@prisma/client';
 import {
   getFallbackAddresses,
   addFallbackAddress,
+  deleteFallbackAddress,
   createFallbackOrder,
   getFallbackOrders,
   getFallbackOrderById,
@@ -173,16 +174,18 @@ export const deleteAddress = async (req: AuthenticatedRequest, res: Response, ne
 
     try {
       const existingAddress = await withFastTimeout(prisma.address.findUnique({ where: { id } }), 300);
-      if (!existingAddress) return next(new NotFoundError('Address not found'));
-      if (existingAddress.userId !== userId) {
-        return next(new ForbiddenError('You can only delete your own address'));
+      if (existingAddress) {
+        if (existingAddress.userId !== userId) {
+          return next(new ForbiddenError('You can only delete your own address'));
+        }
+        await withFastTimeout(prisma.address.delete({ where: { id } }), 300);
+        return res.status(200).json({ success: true, message: 'Address deleted successfully' });
       }
-
-      await withFastTimeout(prisma.address.delete({ where: { id } }), 300);
     } catch (_dbError) {
       // Fallback
     }
 
+    deleteFallbackAddress(userId, id);
     return res.status(200).json({ success: true, message: 'Address deleted successfully' });
   } catch (error) {
     next(error);

@@ -37,18 +37,20 @@ const resetPasswordSchema = z.object({
 });
 
 // Helper: Generate Access Token
-const generateAccessToken = (userId: string, email: string, role: string): string => {
+const generateAccessToken = (userId: string, email: string, role: string, name?: string): string => {
+  const userName = name || (email === 'sparshchauhan050@gmail.com' ? 'Sparsh Chauhan' : 'SmartShop User');
   return jwt.sign(
-    { id: userId, email, role },
+    { id: userId, email, role, name: userName },
     (process.env.JWT_ACCESS_SECRET || 'smartshop_super_secret_access_key_2026_jwt_token') as string,
     { expiresIn: process.env.JWT_ACCESS_EXPIRY || '15m' } as jwt.SignOptions
   );
 };
 
 // Helper: Generate Refresh Token
-const generateRefreshToken = (userId: string, email: string, role: string): string => {
+const generateRefreshToken = (userId: string, email: string, role: string, name?: string): string => {
+  const userName = name || (email === 'sparshchauhan050@gmail.com' ? 'Sparsh Chauhan' : 'SmartShop User');
   return jwt.sign(
-    { id: userId, email, role },
+    { id: userId, email, role, name: userName },
     (process.env.JWT_REFRESH_SECRET || 'smartshop_super_secret_refresh_key_2026_jwt_token') as string,
     { expiresIn: process.env.JWT_REFRESH_EXPIRY || '7d' } as jwt.SignOptions
   );
@@ -281,12 +283,14 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       return next(new UnauthorizedError('Invalid email or password'));
     }
 
-    // Ensure Sparsh Chauhan always has full ADMIN privileges
+    // Ensure Sparsh Chauhan always has full ADMIN privileges and correct name
     const userRole = normalizedInput === 'sparshchauhan050@gmail.com' ? 'ADMIN' : user.role;
+    const userName = normalizedInput === 'sparshchauhan050@gmail.com' ? 'Sparsh Chauhan' : (user.name || 'SmartShop User');
     user.role = userRole;
+    user.name = userName;
 
-    const accessToken = generateAccessToken(user.id, user.email, userRole);
-    const refreshToken = generateRefreshToken(user.id, user.email, userRole);
+    const accessToken = generateAccessToken(user.id, user.email, userRole, userName);
+    const refreshToken = generateRefreshToken(user.id, user.email, userRole, userName);
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,

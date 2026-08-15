@@ -65,12 +65,12 @@ const getOrCreateAddresses = (userId: string): FallbackAddress[] => {
     const defaultAddr: FallbackAddress = {
       id: `addr-${userId}-default`,
       userId,
-      name: userId === 'usr-admin-01' ? 'SmartShop Admin' : 'John Doe',
-      phone: '+91 9876543210',
-      street: '123 Connaught Place, Block B',
-      city: 'New Delhi',
-      state: 'Delhi',
-      postalCode: '110001',
+      name: 'Sparsh Chauhan',
+      phone: '+91 70889 51914',
+      street: 'Lovely Professional University, GT Road',
+      city: 'Phagwara',
+      state: 'Punjab',
+      postalCode: '144411',
       country: 'India',
       isDefault: true,
       createdAt: new Date(),
@@ -191,6 +191,16 @@ export const addFallbackAddress = (userId: string, data: Omit<FallbackAddress, '
   };
   addresses.push(newAddress);
   return newAddress;
+};
+
+export const deleteFallbackAddress = (userId: string, addressId: string): boolean => {
+  const addresses = getOrCreateAddresses(userId);
+  const idx = addresses.findIndex((a) => a.id === addressId);
+  if (idx !== -1) {
+    addresses.splice(idx, 1);
+    return true;
+  }
+  return false;
 };
 
 // ==========================================
