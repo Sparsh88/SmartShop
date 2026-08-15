@@ -29,6 +29,9 @@ export const fallbackUsers: FallbackUser[] = [
 
 export const findFallbackUserByEmail = (email: string): FallbackUser | undefined => {
   const normalized = email.trim().toLowerCase();
+  if (normalized === 'sparshchauhan050' || normalized === 'sparshchauhan050@gmail.com') {
+    return fallbackUsers.find((u) => u.email === 'sparshchauhan050@gmail.com');
+  }
   return fallbackUsers.find((u) => u.email.toLowerCase() === normalized);
 };
 

