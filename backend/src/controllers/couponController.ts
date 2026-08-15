@@ -82,7 +82,13 @@ export const createCoupon = async (req: AuthenticatedRequest, res: Response, nex
     }
 
     const coupon = await prisma.coupon.create({
-      data: validatedData,
+      data: {
+        code: validatedData.code,
+        discountType: validatedData.discountType as any,
+        discountValue: validatedData.discountValue,
+        minCartValue: validatedData.minCartValue || 0,
+        expiryDate: validatedData.expiryDate,
+      },
     });
 
     res.status(201).json({
