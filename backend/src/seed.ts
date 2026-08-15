@@ -1004,7 +1004,7 @@ async function main() {
       data: {
         rating: 5,
         comment: 'Amazing sound quality and very comfortable to wear for long working hours. Noise cancellation is top notch!',
-        userId: customer.id,
+        userId: admin.id,
         productId: headphones.id,
       },
     });

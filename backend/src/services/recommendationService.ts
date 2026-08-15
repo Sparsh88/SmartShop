@@ -336,7 +336,8 @@ export const getPersonalizedRecommendations = async (
       userContext,
     });
 
-    const productMap = new Map<string, any>(candidateProducts.map((p) => [p.id, p]));
+    const productMap = new Map<string, any>();
+    candidateProducts.forEach((p: any) => productMap.set(p.id, p));
     let recommendations: RecommendationItem[] = [];
 
     if (aiRanked && aiRanked.length > 0) {
@@ -495,7 +496,8 @@ export const getRelatedProductRecommendations = async (
       currentProduct: currentSummary,
     });
 
-    const productMap = new Map<string, any>(effectiveCandidates.map((p: any) => [p.id, p]));
+    const productMap = new Map<string, any>();
+    effectiveCandidates.forEach((p: any) => productMap.set(p.id, p));
     let recommendations: RecommendationItem[] = [];
 
     if (aiRanked && aiRanked.length > 0) {
