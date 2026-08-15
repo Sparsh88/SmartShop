@@ -1,3 +1,4 @@
+import process from 'process';
 import { PrismaClient, Role, DiscountType } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
