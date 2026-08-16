@@ -1,4 +1,4 @@
-import process from 'process';
+/// <reference types="node" />
 import { PrismaClient, Role, DiscountType } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
