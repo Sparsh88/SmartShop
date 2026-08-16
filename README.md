@@ -104,28 +104,28 @@ SmartShop integrates an intelligent, production-ready hybrid recommendation engi
 
 ```mermaid
 graph TD
-    UserClient[React 18 Frontend Client] -->|Track Interaction / Request Recommendations| API[Express.js REST API]
-    API -->|Optional Auth| AuthMW[Auth Middleware (User Token or Guest Session)]
-    AuthMW --> RecController[Recommendation Controller]
+    UserClient["React 18 Frontend Client"] -->|Track Interaction / Request Recommendations| API["Express.js REST API"]
+    API -->|Optional Auth| AuthMW["Auth Middleware (User Token or Guest Session)"]
+    AuthMW --> RecController["Recommendation Controller"]
 
     subgraph Recommendation Pipeline
-        RecController --> Cache[In-Memory Cache (TTL 10-30m)]
-        Cache -->|Cache Miss| RecService[Recommendation Service]
-        RecService -->|Fetch User History & Candidates| DB[(PostgreSQL Database)]
+        RecController --> Cache["In-Memory Cache (TTL 10-30m)"]
+        Cache -->|Cache Miss| RecService["Recommendation Service"]
+        RecService -->|Fetch User History & Candidates| DB[("PostgreSQL Database")]
 
-        RecService --> CandidateFilter[Candidate Filtering & Stock Guard]
-        CandidateFilter --> CheckAI{Gemini API Key Available?}
+        RecService --> CandidateFilter["Candidate Filtering & Stock Guard"]
+        CandidateFilter --> CheckAI{"Gemini API Key Available?"}
 
-        CheckAI -->|Yes| GeminiCall[Google Gemini 1.5 Flash (Structured JSON)]
-        CheckAI -->|No / Timeout / Error| FallbackRanker[Deterministic Multi-Factor Ranker]
+        CheckAI -->|Yes| GeminiCall["Google Gemini 1.5 Flash (Structured JSON)"]
+        CheckAI -->|No / Timeout / Error| FallbackRanker["Deterministic Multi-Factor Ranker"]
 
-        GeminiCall -->|Validate with Zod| ValidateAI[Sanitize AI Output against Real Candidate IDs]
-        ValidateAI -->|Success| CombineResults[Merge Products + AI Reasons]
+        GeminiCall -->|Validate with Zod| ValidateAI["Sanitize AI Output against Real Candidate IDs"]
+        ValidateAI -->|Success| CombineResults["Merge Products + AI Reasons"]
         ValidateAI -->|Fail / Invalid| FallbackRanker
         FallbackRanker --> CombineResults
     end
 
-    CombineResults --> SaveCache[Save to Cache]
+    CombineResults --> SaveCache["Save to Cache"]
     SaveCache --> RecController
     RecController --> UserClient
 ```
