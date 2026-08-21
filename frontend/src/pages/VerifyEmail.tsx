@@ -43,10 +43,10 @@ export default function VerifyEmail() {
       <div className="max-w-md w-full bg-slate-900 border border-slate-850 p-8 rounded-3xl shadow-lg space-y-6 relative overflow-hidden">
         
         {/* Decorative Blur BG */}
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl"></div>
 
         <div className="text-center space-y-2">
-          <div className="inline-flex p-3 rounded-full bg-indigo-500/10 text-indigo-400 mb-2">
+          <div className="inline-flex p-3 rounded-full bg-orange-500/10 text-orange-400 mb-2">
             <KeyRound size={28} />
           </div>
           <h2 className="text-3xl font-black font-display text-white">Verify Email</h2>
@@ -66,21 +66,21 @@ export default function VerifyEmail() {
               placeholder="123456"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, ''))}
-              className="bg-slate-950 border border-slate-805 border-slate-800 rounded-xl p-3 text-center tracking-[8px] text-lg font-black font-display text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="bg-slate-950 border border-slate-805 border-slate-800 rounded-xl p-3 text-center tracking-[8px] text-lg font-black font-display text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading || code.length !== 6}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-800 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition"
+            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-orange-500/25 active:scale-[0.99]"
           >
             {isLoading ? 'Verifying...' : 'Verify Code'}
           </button>
         </form>
 
         <div className="bg-slate-950/40 p-4 border border-slate-800 rounded-2xl flex gap-2.5 text-xs text-slate-400">
-          <ShieldAlert size={16} className="text-indigo-400 shrink-0" />
+          <ShieldAlert size={16} className="text-orange-400 shrink-0" />
           <p>
             If you did not receive the email, please check your spam folder. For local sandbox testing, check your backend server log console.
           </p>

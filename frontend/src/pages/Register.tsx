@@ -41,7 +41,7 @@ export default function Register() {
       <div className="max-w-md w-full bg-slate-900 border border-slate-850 p-8 rounded-3xl shadow-lg space-y-6 relative overflow-hidden">
         
         {/* Decorative Blur BG */}
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl"></div>
 
         <div className="text-center space-y-2">
           <h2 className="text-3xl font-black font-display text-white">Create Account</h2>
@@ -58,7 +58,7 @@ export default function Register() {
                 type="text"
                 placeholder="John Doe"
                 {...register('name')}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
               <User size={16} className="absolute left-3.5 top-3.5 text-slate-500" />
             </div>
@@ -73,7 +73,7 @@ export default function Register() {
                 type="email"
                 placeholder="name@example.com"
                 {...register('email')}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
               <Mail size={16} className="absolute left-3.5 top-3.5 text-slate-500" />
             </div>
@@ -88,7 +88,7 @@ export default function Register() {
                 type="password"
                 placeholder="••••••••"
                 {...register('password')}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
               <Lock size={16} className="absolute left-3.5 top-3.5 text-slate-500" />
             </div>
@@ -98,7 +98,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 bg-indigo-650 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-orange-500/25 active:scale-[0.99]"
           >
             Create Account <UserPlus size={16} />
           </button>
@@ -106,7 +106,7 @@ export default function Register() {
 
         <div className="text-center text-xs text-slate-500">
           Already have an account?{' '}
-          <Link to="/login" className="text-indigo-400 font-bold hover:underline">
+          <Link to="/login" className="text-orange-400 font-bold hover:underline">
             Sign In
           </Link>
         </div>
