@@ -64,25 +64,10 @@ export default function Navbar() {
 
   const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  // Text/icon color adapts to theme + scroll state
-  const isLightTop = theme === 'light' && !scrolled;  // light mode, at top
-  const isLightScrolled = theme === 'light' && scrolled; // light mode, scrolled
-  const textCol = (isLightTop || isLightScrolled) ? 'text-slate-900' : 'text-white';
-  const iconCol = (isLightTop || isLightScrolled)
-    ? 'text-slate-700 hover:text-orange-500'
-    : 'text-white/80 hover:text-orange-400';
-  const inputCls = (isLightTop || isLightScrolled)
-    ? 'w-full bg-white/80 border border-slate-300 rounded-full py-1.5 pl-4 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400 transition'
-    : 'w-full bg-white/10 backdrop-blur border border-white/20 rounded-full py-1.5 pl-4 pr-10 text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-orange-400/60 transition';
-
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? theme === 'light'
-            ? 'bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-md'
-            : 'bg-slate-950/85 backdrop-blur-xl border-b border-white/10 shadow-lg'
-          : 'bg-transparent border-b border-transparent'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 dark:bg-slate-950/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 ${
+        scrolled ? 'shadow-md' : 'shadow-xs'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -92,14 +77,14 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2.5 group">
               {/* Shopping Bag Icon */}
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform duration-200">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                   <line x1="3" y1="6" x2="21" y2="6" />
                   <path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
               </div>
-              <span className={`text-2xl font-black tracking-tight ${textCol} transition-colors duration-300`}>
+              <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white transition-colors duration-300 font-display">
                 SmartShop
               </span>
             </Link>
@@ -113,43 +98,56 @@ export default function Navbar() {
                 placeholder="Search premium products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={inputCls}
+                className="w-full bg-slate-100/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-full py-1.5 pl-4 pr-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-slate-900 transition shadow-inner"
               />
-              <button type="submit" className={`absolute right-3 top-2 transition ${
-                (isLightTop || isLightScrolled) ? 'text-slate-400 hover:text-orange-500' : 'text-white/60 hover:text-orange-400'
-              }`}>
+              <button
+                type="submit"
+                className="absolute right-3 top-2 text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 transition"
+                aria-label="Search"
+              >
                 <Search size={18} />
               </button>
             </form>
           </div>
 
           {/* Right Action Icons - Desktop */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-5">
             
             {/* Theme Toggle */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className={`${iconCol} transition spring-active`}
+              className="p-2 rounded-full text-slate-700 hover:text-orange-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-orange-400 dark:hover:bg-slate-900 transition spring-active"
               title="Toggle Theme"
+              aria-label="Toggle Theme"
             >
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
             {/* Wishlist Link */}
-            <Link to="/wishlist" className={`relative ${iconCol} transition spring-active`}>
+            <Link
+              to="/wishlist"
+              className="p-2 rounded-full text-slate-700 hover:text-orange-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-orange-400 dark:hover:bg-slate-900 transition spring-active relative"
+              title="Wishlist"
+              aria-label="Wishlist"
+            >
               <Heart size={20} />
               {wishlistItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-pink-500 text-white rounded-full w-4 h-4 text-[10px] font-bold flex items-center justify-center">
+                <span className="absolute 0 top-0.5 right-0.5 bg-pink-500 text-white rounded-full w-4 h-4 text-[10px] font-bold flex items-center justify-center shadow-xs">
                   {wishlistItems.length}
                 </span>
               )}
             </Link>
 
             {/* Cart Link */}
-            <Link to="/cart" className={`relative ${iconCol} transition spring-active`}>
+            <Link
+              to="/cart"
+              className="p-2 rounded-full text-slate-700 hover:text-orange-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-orange-400 dark:hover:bg-slate-900 transition spring-active relative"
+              title="Shopping Cart"
+              aria-label="Shopping Cart"
+            >
               <ShoppingCart size={20} />
               {totalCartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full w-4 h-4 text-[10px] font-bold flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 bg-orange-500 text-white rounded-full w-4 h-4 text-[10px] font-bold flex items-center justify-center shadow-xs">
                   {totalCartCount}
                 </span>
               )}
@@ -159,7 +157,7 @@ export default function Navbar() {
             {user?.role === 'ADMIN' && (
               <Link
                 to="/admin"
-                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs px-3.5 py-2 rounded-full transition spring-active flex items-center gap-1.5"
+                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs px-3.5 py-2 rounded-full transition spring-active flex items-center gap-1.5 shadow-sm shadow-orange-500/20"
                 title="Go to Admin Panel"
               >
                 <LayoutDashboard size={14} />
@@ -180,15 +178,15 @@ export default function Navbar() {
 
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className={`relative z-40 flex items-center gap-1.5 ${iconCol} transition focus:outline-none spring-active`}
+                  className="relative z-40 flex items-center gap-1.5 py-1.5 px-3 rounded-full text-slate-700 hover:text-orange-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-orange-400 dark:hover:bg-slate-900 transition focus:outline-none spring-active"
                 >
-                  <User size={20} />
-                  <span className="text-sm font-medium max-w-[100px] truncate">{user?.name}</span>
-                  <ChevronDown size={14} />
+                  <User size={19} />
+                  <span className="text-sm font-semibold max-w-[100px] truncate text-slate-800 dark:text-slate-200">{user?.name}</span>
+                  <ChevronDown size={14} className="text-slate-400" />
                 </button>
 
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-xl py-1 animate-in fade-in slide-in-from-top-2 duration-200 z-40">
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-1 animate-in fade-in slide-in-from-top-2 duration-200 z-40">
                     {user?.role === 'ADMIN' && (
                       <Link
                         to="/admin"
@@ -226,7 +224,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold transition spring-active shadow-lg"
+                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold transition spring-active shadow-md shadow-orange-500/20"
               >
                 Sign In
               </Link>
@@ -234,26 +232,32 @@ export default function Navbar() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="flex md:hidden items-center gap-4">
+          <div className="flex md:hidden items-center gap-2">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="text-slate-600 dark:text-slate-300 transition"
+              className="p-2 rounded-lg text-slate-700 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition"
+              aria-label="Toggle Theme"
             >
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
-            <Link to="/cart" className="relative text-slate-600 dark:text-slate-300 transition">
+            <Link
+              to="/cart"
+              className="p-2 rounded-lg relative text-slate-700 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition"
+              aria-label="Shopping Cart"
+            >
               <ShoppingCart size={18} />
               {totalCartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-indigo-500 text-white rounded-full w-4 h-4 text-[9px] font-bold flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 bg-orange-500 text-white rounded-full w-4 h-4 text-[9px] font-bold flex items-center justify-center">
                   {totalCartCount}
                 </span>
               )}
             </Link>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-slate-600 dark:text-slate-300 focus:outline-none"
+              className="p-2 rounded-lg text-slate-700 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 focus:outline-none"
+              aria-label="Open Menu"
             >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
 
