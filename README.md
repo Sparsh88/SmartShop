@@ -270,5 +270,5 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 - **Portfolio:** [portfolio-delta-topaz-jsfd5oekgj.vercel.app](https://portfolio-delta-topaz-jsfd5oekgj.vercel.app/)
 - **GitHub:** [@Sparsh88](https://github.com/Sparsh88)
-- **LinkedIn:** [linkedin.com/in/sparshchauhan08](https://linkedin.com/in/sparshchauhan08)
+- **LinkedIn:** [linkedin.com/in/sparsh88](https://www.linkedin.com/in/sparsh88)
 - **Email:** [sparshchauhan050@gmail.com](mailto:sparshchauhan050@gmail.com)
