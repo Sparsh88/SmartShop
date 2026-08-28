@@ -17,9 +17,9 @@ services:
       - key: JWT_REFRESH_SECRET
         sync: false
       - key: JWT_ACCESS_EXPIRY
-        value: 15m
+        value: 1095d
       - key: JWT_REFRESH_EXPIRY
-        value: 7d
+        value: 1095d
       - key: FRONTEND_URL
         value: https://smart-shop-ten-nu.vercel.app
       - key: CLOUDINARY_CLOUD_NAME

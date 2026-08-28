@@ -36,23 +36,26 @@ const resetPasswordSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
-// Helper: Generate Access Token
+// 3 Years token expiry (1095 days) in milliseconds for seamless long-term session persistence
+const COOKIE_MAX_AGE = 3 * 365 * 24 * 60 * 60 * 1000; // 94,608,000,000 ms
+
+// Helper: Generate Access Token (default 3 years / 1095 days)
 const generateAccessToken = (userId: string, email: string, role: string, name?: string): string => {
   const userName = name || (email === 'sparshchauhan050@gmail.com' ? 'Sparsh Chauhan' : 'SmartShop User');
   return jwt.sign(
     { id: userId, email, role, name: userName },
     (process.env.JWT_ACCESS_SECRET || 'smartshop_super_secret_access_key_2026_jwt_token') as string,
-    { expiresIn: process.env.JWT_ACCESS_EXPIRY || '15m' } as jwt.SignOptions
+    { expiresIn: (process.env.JWT_ACCESS_EXPIRY || '1095d') as any }
   );
 };
 
-// Helper: Generate Refresh Token
+// Helper: Generate Refresh Token (default 3 years / 1095 days)
 const generateRefreshToken = (userId: string, email: string, role: string, name?: string): string => {
   const userName = name || (email === 'sparshchauhan050@gmail.com' ? 'Sparsh Chauhan' : 'SmartShop User');
   return jwt.sign(
     { id: userId, email, role, name: userName },
     (process.env.JWT_REFRESH_SECRET || 'smartshop_super_secret_refresh_key_2026_jwt_token') as string,
-    { expiresIn: process.env.JWT_REFRESH_EXPIRY || '7d' } as jwt.SignOptions
+    { expiresIn: (process.env.JWT_REFRESH_EXPIRY || '1095d') as any }
   );
 };
 
@@ -185,7 +188,7 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: COOKIE_MAX_AGE,
       });
 
       return res.status(200).json({
@@ -214,7 +217,7 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: COOKIE_MAX_AGE,
       });
 
       return res.status(200).json({
@@ -296,7 +299,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: COOKIE_MAX_AGE,
     });
 
     return res.status(200).json({
@@ -357,7 +360,7 @@ export const refresh = async (req: Request, res: Response, next: NextFunction) =
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: COOKIE_MAX_AGE,
     });
 
     return res.status(200).json({

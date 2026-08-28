@@ -125,26 +125,49 @@ export const useAuthStore = create<AuthState>((set) => ({
   checkAuth: async () => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      set({ isAuthenticated: false, user: null });
+      set({ isAuthenticated: false, user: null, isLoading: false });
       return;
+    }
+
+    // Fast-path: Decode and check token expiration locally first
+    try {
+      const payloadBase64 = token.split('.')[1];
+      if (payloadBase64) {
+        const decoded = JSON.parse(atob(payloadBase64));
+        const isExpired = decoded.exp && decoded.exp * 1000 < Date.now();
+
+        if (!isExpired) {
+          // Token is valid (3-year lifespan) -> authenticate immediately
+          set({
+            token,
+            isAuthenticated: true,
+            user: {
+              id: decoded.id,
+              name: decoded.name || (decoded.email === 'sparshchauhan050@gmail.com' ? 'Sparsh Chauhan' : 'SmartShop User'),
+              email: decoded.email,
+              role: (decoded.email === 'sparshchauhan050@gmail.com' ? 'ADMIN' : decoded.role) || 'CUSTOMER',
+              isVerified: true,
+              isBlocked: false,
+            },
+            isLoading: false,
+          });
+          return;
+        }
+      }
+    } catch (_decodeErr) {
+      // If decoding fails, proceed to attempt refresh below
     }
 
     set({ isLoading: true });
     try {
-      // Trigger a silent token refresh. If valid, it returns a new token and verifies login status
+      // Trigger a silent token refresh if token was expired or needs renewal
       const res = await api.post('/auth/refresh');
       const { accessToken } = res.data;
       localStorage.setItem('accessToken', accessToken);
 
-      // Fetch user profile stats (we can use auth-refresh or get current user from admin stats / details)
-      // For simple and efficient bootstrap, let's decode user data or get it from /admin/notifications 
-      // or implement a quick profile endpoint. Let's create an endpoint in user details or read from jwt
-      // Let's decode the payload.
       const payloadBase64 = accessToken.split('.')[1];
       const decodedPayload = JSON.parse(atob(payloadBase64));
 
-      // Fetch latest profile state to see if blocked/verified
-      // Let's make sure it's kept in sync
       set({
         token: accessToken,
         isAuthenticated: true,
@@ -159,7 +182,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         isLoading: false,
       });
     } catch (err) {
-      console.error('CheckAuth failed, logging out:', err);
+      console.error('CheckAuth refresh failed, logging out:', err);
       localStorage.removeItem('accessToken');
       set({
         user: null,
