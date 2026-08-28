@@ -36,26 +36,26 @@ const resetPasswordSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
-// 3 Years token expiry (1095 days) in milliseconds for seamless long-term session persistence
-const COOKIE_MAX_AGE = 3 * 365 * 24 * 60 * 60 * 1000; // 94,608,000,000 ms
+// 100 Years token & cookie expiry (36,500 days) for seamless lifetime session persistence
+const COOKIE_MAX_AGE = 100 * 365 * 24 * 60 * 60 * 1000; // 3,153,600,000,000 ms (~100 years)
 
-// Helper: Generate Access Token (default 3 years / 1095 days)
+// Helper: Generate Access Token (default lifetime 100 years / 36500 days)
 const generateAccessToken = (userId: string, email: string, role: string, name?: string): string => {
   const userName = name || (email === 'sparshchauhan050@gmail.com' ? 'Sparsh Chauhan' : 'SmartShop User');
   return jwt.sign(
     { id: userId, email, role, name: userName },
     (process.env.JWT_ACCESS_SECRET || 'smartshop_super_secret_access_key_2026_jwt_token') as string,
-    { expiresIn: (process.env.JWT_ACCESS_EXPIRY || '1095d') as any }
+    { expiresIn: (process.env.JWT_ACCESS_EXPIRY || '36500d') as any }
   );
 };
 
-// Helper: Generate Refresh Token (default 3 years / 1095 days)
+// Helper: Generate Refresh Token (default lifetime 100 years / 36500 days)
 const generateRefreshToken = (userId: string, email: string, role: string, name?: string): string => {
   const userName = name || (email === 'sparshchauhan050@gmail.com' ? 'Sparsh Chauhan' : 'SmartShop User');
   return jwt.sign(
     { id: userId, email, role, name: userName },
     (process.env.JWT_REFRESH_SECRET || 'smartshop_super_secret_refresh_key_2026_jwt_token') as string,
-    { expiresIn: (process.env.JWT_REFRESH_EXPIRY || '1095d') as any }
+    { expiresIn: (process.env.JWT_REFRESH_EXPIRY || '36500d') as any }
   );
 };
 
