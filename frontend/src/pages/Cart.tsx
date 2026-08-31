@@ -8,6 +8,7 @@ import { formatPrice } from '../utils/priceHelper';
 import api from '../services/api';
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, Ticket, Check, X } from 'lucide-react';
 import RecommendationSection from '../components/RecommendationSection';
+import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from '../components/ScrollReveal';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function Cart() {
     try {
       await removeFromCart(productId, isAuthenticated);
       toast.success('Product removed from cart');
-    } catch (err) {
+    } catch (err: any) {
       toast.error('Error removing item');
     }
   };
@@ -46,7 +47,7 @@ export default function Cart() {
         setAppliedCoupon(null);
         setCouponDiscount(0);
         toast.success('Shopping cart cleared');
-      } catch (err) {
+      } catch (err: any) {
         toast.error('Error clearing cart');
       }
     }
@@ -110,50 +111,53 @@ export default function Cart() {
       setCouponCode(code);
       toast.success(`Coupon ${coupon.code} applied successfully!`);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Invalid or expired coupon');
+      toast.error(err.response?.data?.message || 'Invalid coupon');
     }
   };
 
-  const checkoutPrice = payableAmount - couponDiscount;
-
   const handleCheckout = () => {
     if (!isAuthenticated) {
-      toast.info('Please sign in to proceed to checkout');
+      toast.info('Please sign in to proceed with checkout');
       navigate('/login?redirect=checkout');
       return;
     }
-    
-    // Pass coupon info to checkout page via state
     navigate('/checkout', {
       state: {
-        appliedCoupon: appliedCoupon ? { code: appliedCoupon.code, discount: couponDiscount } : null,
+        appliedCoupon,
+        couponDiscount,
       },
     });
   };
 
+  const checkoutPrice = Math.max(0, payableAmount - couponDiscount);
+
   if (items.length === 0) {
     return (
-      <div className="max-w-md mx-auto px-4 py-20 text-center space-y-6">
-        <div className="inline-flex p-5 rounded-full bg-slate-900 border border-slate-800 text-slate-500">
-          <ShoppingBag size={48} />
-        </div>
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold font-display text-white">Your Cart is Empty</h2>
-          <p className="text-slate-400 text-sm">Add premium items from our store catalog to start shopping.</p>
-        </div>
-        <Link
-          to="/products"
-          className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-full shadow-lg"
-        >
-          Discover Products
-        </Link>
+      <div className="max-w-md mx-auto px-4 py-20 text-center space-y-6 animate-page-enter">
+        <ScrollReveal direction="up" distance={30}>
+          <div className="inline-flex p-5 rounded-full bg-slate-900 border border-slate-800 text-slate-500 mb-4">
+            <ShoppingBag size={48} />
+          </div>
+          <div className="space-y-2 mb-6">
+            <h2 className="text-2xl font-bold font-display text-white">Your Cart is Empty</h2>
+            <p className="text-slate-400 text-sm">Looks like you haven't added any products to your bag yet.</p>
+          </div>
+          <Link
+            to="/products"
+            className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-full shadow-lg"
+          >
+            Start Shopping
+          </Link>
+        </ScrollReveal>
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-page-enter">
-      <h1 className="text-3xl font-black font-display text-white mb-8">Shopping Cart</h1>
+      <ScrollReveal direction="up" distance={25} duration={0.6}>
+        <h1 className="text-3xl font-black font-display text-white mb-8">Shopping Cart</h1>
+      </ScrollReveal>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
@@ -166,81 +170,82 @@ export default function Cart() {
             </button>
           </div>
 
-          <div className="space-y-4">
+          <ScrollRevealGroup staggerDelay={0.08} className="space-y-4">
             {items.map((item) => {
               const imageSrc = fixProductImage(item.product.images?.[0], item.product.name);
 
               return (
-                <div
-                  key={item.id}
-                  className="bg-slate-900 border border-slate-850 p-5 rounded-2xl flex flex-col sm:flex-row items-center gap-5 justify-between shadow-sm"
-                >
-                  {/* Left: Thumbnail & Details */}
-                  <div className="flex items-center gap-4 w-full sm:w-auto">
-                    <img
-                      src={imageSrc}
-                      alt={item.product.name}
-                      className="w-20 h-20 rounded-xl object-cover bg-slate-950 shrink-0"
-                    />
-                    <div>
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
-                        {item.product.brand}
-                      </span>
-                      <Link to={`/product/${item.productId}`} className="block hover:text-indigo-400 transition">
-                        <h3 className="text-white font-bold text-sm line-clamp-1">{item.product.name}</h3>
-                      </Link>
-                      <div className="flex items-baseline gap-2 mt-1.5">
-                        <span className="text-sm font-bold text-slate-200">{formatPrice(item.product.discountPrice)}</span>
-                        {item.product.discount > 0 && (
-                          <span className="text-[11px] text-slate-500 line-through">{formatPrice(item.product.price)}</span>
-                        )}
+                <ScrollRevealItem key={item.id} direction="up" distance={25}>
+                  <div
+                    className="bg-slate-900 border border-slate-850 p-5 rounded-2xl flex flex-col sm:flex-row items-center gap-5 justify-between shadow-sm"
+                  >
+                    {/* Left: Thumbnail & Details */}
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                      <img
+                        src={imageSrc}
+                        alt={item.product.name}
+                        className="w-20 h-20 rounded-xl object-cover bg-slate-950 shrink-0"
+                      />
+                      <div>
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
+                          {item.product.brand}
+                        </span>
+                        <Link to={`/product/${item.productId}`} className="block hover:text-indigo-400 transition">
+                          <h3 className="text-white font-bold text-sm line-clamp-1">{item.product.name}</h3>
+                        </Link>
+                        <div className="flex items-baseline gap-2 mt-1.5">
+                          <span className="text-sm font-bold text-slate-200">{formatPrice(item.product.discountPrice)}</span>
+                          {item.product.discount > 0 && (
+                            <span className="text-[11px] text-slate-500 line-through">{formatPrice(item.product.price)}</span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Right: Quantity Adjustments & Delete */}
-                  <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto border-t sm:border-none pt-4 sm:pt-0 border-slate-800/40">
-                    {/* Quantity selectors */}
-                    <div className="flex items-center border border-slate-800 rounded-full p-0.5 bg-slate-950">
+                    {/* Right: Quantity Adjustments & Delete */}
+                    <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto border-t sm:border-none pt-4 sm:pt-0 border-slate-800/40">
+                      {/* Quantity selectors */}
+                      <div className="flex items-center border border-slate-800 rounded-full p-0.5 bg-slate-950">
+                        <button
+                          onClick={() => handleQtyChange(item.productId, item.quantity - 1)}
+                          disabled={item.quantity <= 1}
+                          className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30"
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span className="w-6 text-center text-xs font-bold text-white">{item.quantity}</span>
+                        <button
+                          onClick={() => handleQtyChange(item.productId, item.quantity + 1)}
+                          disabled={item.quantity >= item.product.stock}
+                          className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30"
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
+
+                      {/* Total item price */}
+                      <span className="text-sm font-bold text-slate-100 min-w-[70px] text-right">
+                        {formatPrice(item.product.discountPrice * item.quantity)}
+                      </span>
+
+                      {/* Delete button */}
                       <button
-                        onClick={() => handleQtyChange(item.productId, item.quantity - 1)}
-                        disabled={item.quantity <= 1}
-                        className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30"
+                        onClick={() => handleRemove(item.productId)}
+                        className="text-slate-500 hover:text-red-500 transition"
+                        title="Remove product"
                       >
-                        <Minus size={14} />
-                      </button>
-                      <span className="w-6 text-center text-xs font-bold text-white">{item.quantity}</span>
-                      <button
-                        onClick={() => handleQtyChange(item.productId, item.quantity + 1)}
-                        disabled={item.quantity >= item.product.stock}
-                        className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30"
-                      >
-                        <Plus size={14} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
-
-                    {/* Total item price */}
-                    <span className="text-sm font-bold text-slate-100 min-w-[70px] text-right">
-                      {formatPrice(item.product.discountPrice * item.quantity)}
-                    </span>
-
-                    {/* Delete button */}
-                    <button
-                      onClick={() => handleRemove(item.productId)}
-                      className="text-slate-500 hover:text-red-500 transition"
-                      title="Remove product"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                   </div>
-                </div>
+                </ScrollRevealItem>
               );
             })}
-          </div>
+          </ScrollRevealGroup>
         </div>
 
         {/* Right Column: Calculations summary card */}
-        <div className="space-y-6">
+        <ScrollReveal direction="left" distance={30} duration={0.7} className="space-y-6">
           <div className="glass-card border border-slate-800 p-6 rounded-3xl space-y-6">
             <h3 className="text-lg font-bold font-display text-white">Order Summary</h3>
 
@@ -353,9 +358,7 @@ export default function Cart() {
               </div>
             )}
           </div>
-
-        </div>
-
+        </ScrollReveal>
       </div>
 
       {/* COMPLEMENTARY RECOMMENDATIONS */}

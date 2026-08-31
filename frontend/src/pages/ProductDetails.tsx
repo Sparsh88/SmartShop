@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
@@ -13,7 +13,7 @@ import { fixProductImage } from '../utils/imageHelper';
 import { formatPrice } from '../utils/priceHelper';
 import RecommendationSection from '../components/RecommendationSection';
 import { recommendationApi } from '../services/recommendationApi';
-import { useEffect } from 'react';
+import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from '../components/ScrollReveal';
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
@@ -126,7 +126,7 @@ export default function ProductDetails() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         
         {/* Left column: Image Slider and Zoom */}
-        <div className="space-y-4">
+        <ScrollReveal direction="left" distance={35} duration={0.7} className="space-y-4">
           <ImageZoom src={mainImageSrc} alt={product.name} />
           
           {/* Thumbnails */}
@@ -148,10 +148,10 @@ export default function ProductDetails() {
               })}
             </div>
           )}
-        </div>
+        </ScrollReveal>
 
         {/* Right column: Specs and Actions */}
-        <div className="space-y-6">
+        <ScrollReveal direction="right" distance={35} duration={0.7} className="space-y-6">
           <div>
             <span className="text-xs uppercase tracking-widest text-indigo-400 font-bold bg-indigo-500/10 px-3 py-1 rounded-md">
               {product.brand}
@@ -260,14 +260,14 @@ export default function ProductDetails() {
             </div>
           )}
 
-        </div>
+        </ScrollReveal>
       </div>
 
       {/* REVIEWS SECTION */}
       <section className="border-t border-slate-850 pt-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
         
         {/* Left sidebar: Stats & Add Review */}
-        <div className="space-y-6">
+        <ScrollReveal direction="up" distance={30} duration={0.6} className="space-y-6">
           <div>
             <h2 className="text-2xl font-black font-display text-white">Customer Reviews</h2>
             <p className="text-slate-400 text-sm mt-1">Real reviews from confirmed purchases.</p>
@@ -327,38 +327,42 @@ export default function ProductDetails() {
               </Link>
             </div>
           )}
-        </div>
+        </ScrollReveal>
 
         {/* Right sidebar: List of reviews */}
         <div className="lg:col-span-2 space-y-4">
           {product.reviews?.length === 0 ? (
-            <div className="text-center py-10 bg-slate-900/30 border border-dashed border-slate-800 rounded-2xl">
-              <p className="text-slate-500 text-sm">No reviews yet. Be the first to buy and review!</p>
-            </div>
+            <ScrollReveal direction="up" distance={25}>
+              <div className="text-center py-10 bg-slate-900/30 border border-dashed border-slate-800 rounded-2xl">
+                <p className="text-slate-500 text-sm">No reviews yet. Be the first to buy and review!</p>
+              </div>
+            </ScrollReveal>
           ) : (
-            <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+            <ScrollRevealGroup staggerDelay={0.1} className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
               {product.reviews.map((rev: any) => (
-                <div key={rev.id} className="bg-slate-900/60 border border-slate-850 p-5 rounded-2xl space-y-2.5">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-sm text-white">{rev.user?.name}</span>
-                    <span className="text-xs text-slate-500">{new Date(rev.createdAt).toLocaleDateString()}</span>
-                  </div>
+                <ScrollRevealItem key={rev.id} direction="up" distance={25}>
+                  <div className="bg-slate-900/60 border border-slate-850 p-5 rounded-2xl space-y-2.5">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-sm text-white">{rev.user?.name}</span>
+                      <span className="text-xs text-slate-500">{new Date(rev.createdAt).toLocaleDateString()}</span>
+                    </div>
 
-                  <div className="flex text-amber-500">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        size={12}
-                        fill={i < rev.rating ? 'currentColor' : 'none'}
-                        className={i < rev.rating ? 'text-amber-500' : 'text-slate-800'}
-                      />
-                    ))}
-                  </div>
+                    <div className="flex text-amber-500">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          size={12}
+                          fill={i < rev.rating ? 'currentColor' : 'none'}
+                          className={i < rev.rating ? 'text-amber-500' : 'text-slate-800'}
+                        />
+                      ))}
+                    </div>
 
-                  <p className="text-slate-400 text-sm leading-relaxed">{rev.comment}</p>
-                </div>
+                    <p className="text-slate-400 text-sm leading-relaxed">{rev.comment}</p>
+                  </div>
+                </ScrollRevealItem>
               ))}
-            </div>
+            </ScrollRevealGroup>
           )}
         </div>
 

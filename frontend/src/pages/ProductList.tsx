@@ -5,7 +5,7 @@ import ProductCard from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/LoadingSkeleton';
 import { SlidersHorizontal, ArrowUpDown, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-
+import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from '../components/ScrollReveal';
 
 export default function ProductList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -41,7 +41,6 @@ export default function ProductList() {
     },
     staleTime: 60 * 1000,
   });
-
 
   // Fetch categories query (cached indefinitely across filter toggles)
   const { data: categoriesData } = useQuery({
@@ -85,146 +84,149 @@ export default function ProductList() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-page-enter">
       
       {/* Header Summary */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-black font-display text-white">
-            {search ? `Search results for "${search}"` : 'All Products'}
-          </h1>
-          <p className="text-slate-400 text-sm mt-1">
-            Showing {data?.products?.length || 0} of {data?.pagination?.totalProducts || 0} products
-          </p>
-        </div>
+      <ScrollReveal direction="up" distance={25} duration={0.6}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-black font-display text-white">
+              {search ? `Search results for "${search}"` : 'All Products'}
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">
+              Showing {data?.products?.length || 0} of {data?.pagination?.totalProducts || 0} products
+            </p>
+          </div>
 
-        {/* Sort Select */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="lg:hidden flex items-center gap-1.5 bg-slate-900 border border-slate-800 text-slate-300 px-4 py-2 rounded-xl text-sm font-semibold hover:border-indigo-500"
-          >
-            <SlidersHorizontal size={16} /> Filters
-          </button>
-          
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-sm">
-            <ArrowUpDown size={16} className="text-slate-400" />
-            <select
-              value={sort}
-              onChange={(e) => updateParam('sort', e.target.value)}
-              className="bg-transparent text-slate-300 focus:outline-none cursor-pointer"
+          {/* Sort Select */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="lg:hidden flex items-center gap-1.5 bg-slate-900 border border-slate-800 text-slate-300 px-4 py-2 rounded-xl text-sm font-semibold hover:border-indigo-500"
             >
-              <option value="latest">Latest Arrivals</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="rating">Top Rated</option>
-            </select>
+              <SlidersHorizontal size={16} /> Filters
+            </button>
+            
+            <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-sm">
+              <ArrowUpDown size={16} className="text-slate-400" />
+              <select
+                value={sort}
+                onChange={(e) => updateParam('sort', e.target.value)}
+                className="bg-transparent text-slate-300 focus:outline-none cursor-pointer"
+              >
+                <option value="latest">Latest Arrivals</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         
         {/* SIDEBAR FILTERS - Desktop */}
         <aside className={`lg:block ${showMobileFilters ? 'block' : 'hidden'} space-y-6 lg:bg-transparent bg-slate-950 p-6 lg:p-0 rounded-2xl border lg:border-none border-slate-800`}>
-          <div className="flex justify-between items-center pb-4 border-b border-slate-800">
-            <h3 className="font-bold text-lg text-white">Filter Products</h3>
-            <button onClick={clearFilters} className="text-xs text-indigo-400 hover:text-indigo-300 font-bold">
-              Reset Filters
-            </button>
-          </div>
-
-          {/* Categories */}
-          <div className="space-y-3">
-            <h4 className="font-semibold text-sm text-slate-200">Category</h4>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => updateParam('category', '')}
-                className={`text-left text-sm py-1 px-2.5 rounded-lg transition ${
-                  !category ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-                }`}
-              >
-                All Categories
+          <ScrollReveal direction="right" distance={30} duration={0.6}>
+            <div className="flex justify-between items-center pb-4 border-b border-slate-800">
+              <h3 className="font-bold text-lg text-white">Filter Products</h3>
+              <button onClick={clearFilters} className="text-xs text-indigo-400 hover:text-indigo-300 font-bold">
+                Reset Filters
               </button>
-              {categoriesData?.map((cat: any) => (
+            </div>
+
+            {/* Categories */}
+            <div className="space-y-3 mt-6">
+              <h4 className="font-semibold text-sm text-slate-200">Category</h4>
+              <div className="flex flex-col gap-2">
                 <button
-                  key={cat.id}
-                  onClick={() => updateParam('category', cat.slug)}
+                  onClick={() => updateParam('category', '')}
                   className={`text-left text-sm py-1 px-2.5 rounded-lg transition ${
-                    category === cat.slug ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                    !category ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
                   }`}
                 >
-                  {cat.name}
+                  All Categories
                 </button>
-              ))}
+                {categoriesData?.map((cat: any) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => updateParam('category', cat.slug)}
+                    className={`text-left text-sm py-1 px-2.5 rounded-lg transition ${
+                      category === cat.slug ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Brands */}
-          <div className="space-y-3">
-            <h4 className="font-semibold text-sm text-slate-200">Brands</h4>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => updateParam('brand', '')}
-                className={`text-left text-sm py-1 px-2.5 rounded-lg transition ${
-                  !brand ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-                }`}
-              >
-                All Brands
-              </button>
-              {brandsData?.map((b: string) => (
+            {/* Brands */}
+            <div className="space-y-3 mt-6">
+              <h4 className="font-semibold text-sm text-slate-200">Brands</h4>
+              <div className="flex flex-col gap-2">
                 <button
-                  key={b}
-                  onClick={() => updateParam('brand', b)}
+                  onClick={() => updateParam('brand', '')}
                   className={`text-left text-sm py-1 px-2.5 rounded-lg transition ${
-                    brand === b ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                    !brand ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
                   }`}
                 >
-                  {b}
+                  All Brands
                 </button>
-              ))}
+                {brandsData?.map((b: string) => (
+                  <button
+                    key={b}
+                    onClick={() => updateParam('brand', b)}
+                    className={`text-left text-sm py-1 px-2.5 rounded-lg transition ${
+                      brand === b ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                    }`}
+                  >
+                    {b}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Price Range */}
-          <div className="space-y-3">
-            <h4 className="font-semibold text-sm text-slate-200">Price Bounds</h4>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                placeholder="Min"
-                value={minPrice}
-                onChange={(e) => updateParam('minPrice', e.target.value)}
-                className="bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs w-full text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
-              <span className="text-slate-500">-</span>
-              <input
-                type="number"
-                placeholder="Max"
-                value={maxPrice}
-                onChange={(e) => updateParam('maxPrice', e.target.value)}
-                className="bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs w-full text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
+            {/* Price Range */}
+            <div className="space-y-3 mt-6">
+              <h4 className="font-semibold text-sm text-slate-200">Price Bounds</h4>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={minPrice}
+                  onChange={(e) => updateParam('minPrice', e.target.value)}
+                  className="bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs w-full text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+                <span className="text-slate-500">-</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={maxPrice}
+                  onChange={(e) => updateParam('maxPrice', e.target.value)}
+                  className="bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs w-full text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Ratings */}
-          <div className="space-y-3">
-            <h4 className="font-semibold text-sm text-slate-200">Customer Rating</h4>
-            <div className="flex flex-col gap-2">
-              {[4, 3, 2].map((stars) => (
-                <button
-                  key={stars}
-                  onClick={() => updateParam('rating', stars.toString())}
-                  className={`text-left text-xs py-1.5 px-2.5 rounded-lg transition ${
-                    rating === stars.toString()
-                      ? 'bg-indigo-600 text-white font-semibold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-                  }`}
-                >
-                  {stars}★ & Above
-                </button>
-              ))}
+            {/* Ratings */}
+            <div className="space-y-3 mt-6">
+              <h4 className="font-semibold text-sm text-slate-200">Customer Rating</h4>
+              <div className="flex flex-col gap-2">
+                {[4, 3, 2].map((stars) => (
+                  <button
+                    key={stars}
+                    onClick={() => updateParam('rating', stars.toString())}
+                    className={`text-left text-xs py-1.5 px-2.5 rounded-lg transition ${
+                      rating === stars.toString()
+                        ? 'bg-indigo-600 text-white font-semibold'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                    }`}
+                  >
+                    {stars}★ & Above
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-
+          </ScrollReveal>
         </aside>
 
         {/* PRODUCTS GRID SECTION */}
@@ -232,69 +234,77 @@ export default function ProductList() {
           {isLoading ? (
             <ProductGridSkeleton count={6} />
           ) : data?.products?.length === 0 ? (
-            <div className="text-center py-20 bg-slate-900/50 border border-slate-800 rounded-2xl">
-              <p className="text-slate-400 mb-4 font-semibold text-lg">No such product available</p>
-              <button
-                onClick={clearFilters}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition"
-              >
-                Clear Filters
-              </button>
-            </div>
+            <ScrollReveal direction="up" distance={30}>
+              <div className="text-center py-20 bg-slate-900/50 border border-slate-800 rounded-2xl">
+                <p className="text-slate-400 mb-4 font-semibold text-lg">No such product available</p>
+                <button
+                  onClick={clearFilters}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </ScrollReveal>
           ) : (
             <>
               {data?.searchMessage && (
-                <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-2xl p-4 flex items-center gap-3 text-indigo-200 text-sm shadow-sm backdrop-blur-sm animate-pulse-slow">
-                  <Sparkles className="text-indigo-400 shrink-0" size={20} />
-                  <div>
-                    <span className="font-semibold text-white">{data.searchMessage}</span>
+                <ScrollReveal direction="up" distance={20}>
+                  <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-2xl p-4 flex items-center gap-3 text-indigo-200 text-sm shadow-sm backdrop-blur-sm animate-pulse-slow">
+                    <Sparkles className="text-indigo-400 shrink-0" size={20} />
+                    <div>
+                      <span className="font-semibold text-white">{data.searchMessage}</span>
+                    </div>
                   </div>
-                </div>
+                </ScrollReveal>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Staggered Product Cards Grid */}
+              <ScrollRevealGroup staggerDelay={0.08} delayChildren={0.05} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data?.products?.map((product: any) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ScrollRevealItem key={product.id} direction="up" distance={30}>
+                    <ProductCard product={product} />
+                  </ScrollRevealItem>
                 ))}
-              </div>
-
+              </ScrollRevealGroup>
 
               {/* PAGINATION CONTROLS */}
               {data?.pagination?.totalPages > 1 && (
-                <div className="flex items-center justify-center gap-3 pt-6 border-t border-slate-850">
-                  <button
-                    disabled={parseInt(page) === 1}
-                    onClick={() => updateParam('page', (parseInt(page) - 1).toString())}
-                    className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500 disabled:opacity-40 disabled:hover:border-slate-800 transition"
-                  >
-                    <ChevronLeft size={18} />
-                  </button>
-                  
-                  {Array.from({ length: data.pagination.totalPages }).map((_, idx) => {
-                    const pageVal = (idx + 1).toString();
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => updateParam('page', pageVal)}
-                        className={`w-9 h-9 rounded-lg font-semibold text-sm transition ${
-                          page === pageVal
-                            ? 'bg-indigo-600 text-white shadow-md'
-                            : 'bg-slate-900 border border-slate-800 hover:border-indigo-500'
-                        }`}
-                      >
-                        {pageVal}
-                      </button>
-                    );
-                  })}
+                <ScrollReveal direction="up" distance={20}>
+                  <div className="flex items-center justify-center gap-3 pt-6 border-t border-slate-850">
+                    <button
+                      disabled={parseInt(page) === 1}
+                      onClick={() => updateParam('page', (parseInt(page) - 1).toString())}
+                      className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500 disabled:opacity-40 disabled:hover:border-slate-800 transition"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    
+                    {Array.from({ length: data.pagination.totalPages }).map((_, idx) => {
+                      const pageVal = (idx + 1).toString();
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => updateParam('page', pageVal)}
+                          className={`w-9 h-9 rounded-lg font-semibold text-sm transition ${
+                            page === pageVal
+                              ? 'bg-indigo-600 text-white shadow-md'
+                              : 'bg-slate-900 border border-slate-800 hover:border-indigo-500'
+                          }`}
+                        >
+                          {pageVal}
+                        </button>
+                      );
+                    })}
 
-                  <button
-                    disabled={parseInt(page) === data.pagination.totalPages}
-                    onClick={() => updateParam('page', (parseInt(page) + 1).toString())}
-                    className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500 disabled:opacity-40 disabled:hover:border-slate-800 transition"
-                  >
-                    <ChevronRight size={18} />
-                  </button>
-                </div>
+                    <button
+                      disabled={parseInt(page) === data.pagination.totalPages}
+                      onClick={() => updateParam('page', (parseInt(page) + 1).toString())}
+                      className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500 disabled:opacity-40 disabled:hover:border-slate-800 transition"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                </ScrollReveal>
               )}
             </>
           )}
