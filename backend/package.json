@@ -18,6 +18,8 @@
   "license": "ISC",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@neondatabase/serverless": "^1.1.0",
+    "@prisma/adapter-neon": "^7.10.0",
     "@prisma/client": "^5.12.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
@@ -39,6 +41,7 @@
     "prisma": "^5.12.1",
     "razorpay": "^2.9.2",
     "typescript": "^5.4.5",
+    "ws": "^8.21.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
