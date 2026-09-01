@@ -39,19 +39,19 @@ export default function RecommendationSection({
         return await recommendationApi.getPersonalized(limit);
       }
     },
-    staleTime: 3 * 60 * 1000, // 3 minutes fresh cache
+    staleTime: 3 * 60 * 1000,
   });
 
   if (isLoading) {
     return (
       <section className={`space-y-6 ${className}`}>
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            <Sparkles size={20} className="animate-spin-slow" />
+          <div className="p-2 rounded-2xl bg-[#F4F3EF] dark:bg-[#1E1E22] text-neutral-900 dark:text-white border border-neutral-300/60 dark:border-neutral-700/60">
+            <Sparkles size={18} />
           </div>
           <div>
-            <div className="h-7 w-48 bg-slate-800 rounded-lg animate-pulse mb-1"></div>
-            <div className="h-4 w-72 bg-slate-850 rounded animate-pulse"></div>
+            <div className="h-6 w-48 bg-neutral-200 dark:bg-neutral-800 rounded-lg animate-pulse mb-1"></div>
+            <div className="h-3.5 w-72 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse"></div>
           </div>
         </div>
         <ProductGridSkeleton count={limit} />
@@ -62,7 +62,7 @@ export default function RecommendationSection({
   const recommendations = data?.recommendations || [];
 
   if (isError || recommendations.length === 0) {
-    return null; // Gracefully omit empty recommendations rather than showing broken UI
+    return null;
   }
 
   const isAiPowered = data?.source === 'gemini-ai' || recommendations.some((r) => r.isAiGenerated);
@@ -70,60 +70,57 @@ export default function RecommendationSection({
   return (
     <section className={`space-y-6 ${className}`}>
       {/* Header with AI Pill and Subtitle */}
-      <ScrollReveal direction="up" distance={25} duration={0.6}>
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+      <ScrollReveal direction="up" distance={20} duration={0.6}>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-neutral-200/80 dark:border-neutral-800">
           <div>
-            <div className="flex items-center gap-2.5 mb-1.5">
-              <div className="flex items-center gap-1.5 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-0.5 rounded-full text-xs font-bold tracking-wide">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="inline-flex items-center gap-1.5 bg-[#F4F3EF] dark:bg-[#1E1E22] border border-neutral-300/80 dark:border-neutral-700/80 text-neutral-900 dark:text-white px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
                 {isAiPowered ? (
                   <>
-                    <Bot size={13} className="text-indigo-400" />
-                    <span>AI Powered</span>
+                    <Bot size={12} />
+                    <span>AI Tailored</span>
                   </>
                 ) : (
                   <>
-                    <Zap size={13} className="text-amber-400" />
-                    <span>Smart Pick</span>
+                    <Zap size={12} />
+                    <span>Smart Recommendation</span>
                   </>
                 )}
               </div>
-              <span className="text-[11px] text-slate-500 font-medium">Real-Time Intelligence</span>
+              <span className="text-[11px] text-neutral-400 font-medium">Real-Time Engine</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black font-display text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+            <h2 className="font-editorial text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
               {title}
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-0.5">{subtitle}</p>
+            <p className="text-neutral-500 dark:text-neutral-400 text-xs sm:text-sm mt-0.5">{subtitle}</p>
           </div>
 
           {showViewAll && (
             <Link
               to="/products"
-              className="text-xs sm:text-sm font-bold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 flex items-center gap-1.5 transition-colors duration-200 group self-start sm:self-auto"
+              className="text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-900 dark:text-white hover:opacity-75 flex items-center gap-1.5 transition-colors self-start sm:self-auto"
             >
-              Explore Catalog{' '}
-              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+              Explore Catalog <ArrowRight size={14} />
             </Link>
           )}
         </div>
       </ScrollReveal>
 
-      {/* Grid of Product Cards with AI Explanations - Staggered */}
-      <ScrollRevealGroup staggerDelay={0.12} delayChildren={0.05} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Grid of Product Cards with AI Reason Pills */}
+      <ScrollRevealGroup staggerDelay={0.1} delayChildren={0.05} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {recommendations.map((item, index) => (
-          <ScrollRevealItem key={item.product.id || index} direction="up" distance={35}>
+          <ScrollRevealItem key={item.product.id || index} direction="up" distance={30}>
             <div className="flex flex-col h-full space-y-2">
-              {/* Standard Product Card */}
               <div className="flex-grow">
                 <ProductCard product={item.product as any} />
               </div>
 
-              {/* Smart Reason Chip under Card */}
               {item.reason && (
-                <div className="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/80 rounded-xl px-3 py-2 flex items-start gap-2 shadow-sm">
-                  <Sparkles size={13} className="text-indigo-500 dark:text-indigo-400 shrink-0 mt-0.5" />
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight line-clamp-2">
-                    <span className="font-semibold text-indigo-600 dark:text-indigo-400">Why recommended: </span>
+                <div className="bg-white dark:bg-[#161618] border border-neutral-200/80 dark:border-neutral-800 rounded-2xl px-3.5 py-2 flex items-start gap-2 shadow-soft-sm">
+                  <Sparkles size={13} className="text-neutral-900 dark:text-white shrink-0 mt-0.5" />
+                  <p className="text-[11px] text-neutral-600 dark:text-neutral-300 leading-snug line-clamp-2">
+                    <span className="font-bold text-neutral-900 dark:text-white">Why pick: </span>
                     {item.reason}
                   </p>
                 </div>

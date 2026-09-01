@@ -7,7 +7,7 @@ import { fallbackProducts } from '../utils/catalogFallback';
 import { fallbackUsers } from '../utils/userFallback';
 import { getAllFallbackOrders, updateFallbackOrderStatus } from '../utils/ecomFallback';
 
-const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 300): Promise<T> => {
+const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 4000): Promise<T> => {
   return Promise.race([
     promise,
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error('DB_TIMEOUT')), timeoutMs)),

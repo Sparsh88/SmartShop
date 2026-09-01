@@ -249,7 +249,7 @@ export const createOrder = async (req: AuthenticatedRequest, res: Response, next
           300
         );
 
-        if (coupon && coupon.isActive && coupon.expiryDate >= new Date()) {
+        if (coupon && coupon.isActive && coupon.expiryDate >= new Date() && totalAmount >= (coupon.minCartValue || 0)) {
           if (coupon.discountType === 'PERCENTAGE') {
             discountAmount = (totalAmount * coupon.discountValue) / 100;
           } else {

@@ -55,10 +55,10 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-orange-500 selection:text-white">
+        <div className="flex flex-col min-h-screen bg-[#FAF9F6] dark:bg-[#0D0D0E] text-neutral-900 dark:text-neutral-100 selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-neutral-900 transition-colors duration-300">
           <Navbar />
 
-          <div className="flex-grow pt-16">
+          <div className="flex-grow pt-20">
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Home />} />

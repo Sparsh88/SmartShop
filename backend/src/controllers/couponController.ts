@@ -4,7 +4,7 @@ import prisma from '../config/db';
 import { BadRequestError, NotFoundError } from '../utils/errors';
 import { z } from 'zod';
 
-const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 300): Promise<T> => {
+const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 4000): Promise<T> => {
   return Promise.race([
     promise,
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error('DB_TIMEOUT')), timeoutMs)),
@@ -137,6 +137,7 @@ export const validateCoupon = async (req: AuthenticatedRequest, res: Response, n
         code: coupon.code,
         discountType: coupon.discountType,
         discountValue: coupon.discountValue,
+        minCartValue: coupon.minCartValue,
       },
     });
   } catch (error) {

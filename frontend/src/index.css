@@ -3,80 +3,118 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg-primary: #FAF9F6;
+    --bg-surface: #FFFFFF;
+    --bg-muted: #F4F3EF;
+    --text-primary: #121212;
+    --text-secondary: #525252;
+    --text-muted: #8E8E93;
+    --border-subtle: #E8E7E3;
+    --border-card: #EFEFED;
+    --accent-pill: #18181B;
+  }
+
+  .dark {
+    --bg-primary: #0D0D0E;
+    --bg-surface: #161618;
+    --bg-muted: #202024;
+    --text-primary: #F4F4F5;
+    --text-secondary: #A1A1AA;
+    --text-muted: #71717A;
+    --border-subtle: #27272A;
+    --border-card: #222226;
+    --accent-pill: #FFFFFF;
+  }
+
   body {
-    @apply bg-slate-950 text-slate-100 font-sans transition-colors duration-300;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 
-/* Premium Scrollbar */
+/* Luxury Minimal Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4f46e5;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6366f1;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Glassmorphism Styles */
-.glass-effect {
-  background: rgba(10, 10, 10, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.glass-header {
+  background: rgba(250, 249, 246, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.glass-effect-light {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+.dark .glass-header {
+  background: rgba(13, 13, 14, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .glass-card {
-  background: rgba(23, 23, 23, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+}
+
+.glass-card-hover {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.08);
 }
 
 /* Smooth zoom transition helper */
+.zoom-container {
+  overflow: hidden;
+}
+
 .zoom-container img {
-  transition: transform 0.5s ease;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .zoom-container:hover img {
-  transform: scale(1.1);
+  transform: scale(1.06);
 }
 
-/* Neon button pulses */
-@keyframes neonPulse {
-  0%, 100% {
-    box-shadow: 0 0 5px rgba(99, 102, 241, 0.2), 0 0 20px rgba(99, 102, 241, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.6), 0 0 30px rgba(99, 102, 241, 0.4);
-  }
-}
-
-.pulse-primary {
-  animation: neonPulse 2s infinite;
-}
-
-/* Premium Animations & Interactions */
+/* Page Enter Animation */
 @keyframes pageEnter {
   0% {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(8px);
   }
   100% {
     opacity: 1;
@@ -85,15 +123,16 @@
 }
 
 .animate-page-enter {
-  animation: pageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: pageEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Micro Interactions */
 .hover-translate-up {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hover-translate-up:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
 }
 
 .spring-active {
@@ -101,89 +140,7 @@
 }
 
 .spring-active:active {
-  transform: scale(0.96);
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #a78bfa 0%, #6366f1 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-
-/* Global Light Mode Overrides */
-html:not(.dark) body {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
-}
-
-html:not(.dark) .bg-slate-950,
-html:not(.dark) .bg-slate-950\/80,
-html:not(.dark) .bg-slate-950\/60,
-html:not(.dark) .bg-slate-950\/40,
-html:not(.dark) .bg-slate-950\/20,
-html:not(.dark) .bg-slate-900,
-html:not(.dark) .bg-slate-900\/50,
-html:not(.dark) .bg-slate-900\/40,
-html:not(.dark) .bg-slate-950\/60,
-html:not(.dark) .glass-card,
-html:not(.dark) .glass-effect {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  color: #0f172a !important;
-}
-
-html:not(.dark) .border-slate-800,
-html:not(.dark) .border-slate-850,
-html:not(.dark) .border-slate-900,
-html:not(.dark) .border-slate-800\/40,
-html:not(.dark) .border-slate-200,
-html:not(.dark) .border-slate-850\/60 {
-  border-color: #e2e8f0 !important;
-}
-
-html:not(.dark) .text-white,
-html:not(.dark) .text-slate-100,
-html:not(.dark) .text-slate-200,
-html:not(.dark) .text-slate-300,
-html:not(.dark) .text-slate-400 {
-  color: #0f172a !important;
-}
-
-html:not(.dark) .text-slate-500 {
-  color: #64748b !important;
-}
-
-html:not(.dark) input,
-html:not(.dark) textarea,
-html:not(.dark) select,
-html:not(.dark) .bg-slate-950 input,
-html:not(.dark) .bg-slate-900 input {
-  background-color: #f8fafc !important;
-  border-color: #cbd5e1 !important;
-  color: #0f172a !important;
-}
-
-html:not(.dark) input::placeholder,
-html:not(.dark) textarea::placeholder {
-  color: #94a3b8 !important;
-}
-
-html:not(.dark) .bg-slate-950\/20 {
-  background-color: rgba(226, 232, 240, 0.5) !important;
-}
-
-html:not(.dark) .hover\:bg-slate-950\/20:hover {
-  background-color: #f1f5f9 !important;
-}
-
-html:not(.dark) .hover\:bg-slate-900:hover {
-  background-color: #f1f5f9 !important;
-}
-
-html:not(.dark) .bg-slate-950\/60 {
-  background-color: rgba(255, 255, 255, 0.8) !important;
+  transform: scale(0.97);
 }
 
 /* Infinite Marquee Scroll Animations */
@@ -208,12 +165,75 @@ html:not(.dark) .bg-slate-950\/60 {
 .animate-marquee-left {
   display: flex;
   width: max-content;
-  animation: marqueeLeft 30s linear infinite;
+  animation: marqueeLeft 28s linear infinite;
+  will-change: transform;
 }
 
 .animate-marquee-right {
   display: flex;
   width: max-content;
-  animation: marqueeRight 30s linear infinite;
+  animation: marqueeRight 28s linear infinite;
+  will-change: transform;
+}
+
+/* Circular Arrow Icon Badge for Pill Buttons */
+.btn-pill-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #121212;
+  color: #FFFFFF;
+  padding: 0.75rem 1.25rem 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.dark .btn-pill-arrow {
+  background-color: #FFFFFF;
+  color: #121212;
+}
+
+.btn-pill-arrow .arrow-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.dark .btn-pill-arrow .arrow-circle {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.btn-pill-arrow:hover .arrow-circle {
+  transform: rotate(45deg);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.dark .btn-pill-arrow:hover .arrow-circle {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Prevent browser blue background on input autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #F4F3EF inset !important;
+  -webkit-text-fill-color: #121212 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus, 
+.dark input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1F1F24 inset !important;
+  -webkit-text-fill-color: #FFFFFF !important;
 }
 

@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { createPortal } from 'react-dom';
 import api from '../services/api';
 import AdminSidebar from '../components/AdminSidebar';
 import { toast } from '../store/toastStore';
 import { formatPrice } from '../utils/priceHelper';
-import { Eye, X } from 'lucide-react';
+import { Eye, X, Package } from 'lucide-react';
 import { useState } from 'react';
+import { ScrollReveal } from '../components/ScrollReveal';
 
 export default function AdminOrders() {
   const queryClient = useQueryClient();
@@ -27,10 +29,9 @@ export default function AdminOrders() {
     },
     onSuccess: () => {
       toast.success('Order status updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
-      // Refresh current inspector modal if active
+      queryClient.invalidateQueries();
       if (selectedOrder) {
-        const updated = orders.find((o: any) => o.id === selectedOrder.id);
+        const updated = orders?.find((o: any) => o.id === selectedOrder.id);
         if (updated) setSelectedOrder(updated);
       }
     },
@@ -44,49 +45,54 @@ export default function AdminOrders() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)]">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-5rem)] bg-[#FAF9F6] dark:bg-[#0D0D0E] text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
       <AdminSidebar />
 
-      <main className="flex-1 p-6 sm:p-8 space-y-6 bg-slate-950 animate-page-enter">
-        <div>
-          <h1 className="text-3xl font-black font-display text-white">Manage Orders</h1>
-          <p className="text-slate-400 text-sm mt-1">Review purchases, update fulfillment steps, and inspect tracking checkpoints.</p>
-        </div>
+      <main className="flex-1 p-6 sm:p-8 space-y-6">
+        <ScrollReveal direction="up" distance={20} duration={0.6}>
+          <div className="pb-4 border-b border-neutral-200/80 dark:border-neutral-800">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 block mb-1">
+              Fulfillment Operations
+            </span>
+            <h1 className="font-editorial text-3xl sm:text-4xl font-black text-neutral-900 dark:text-white tracking-tight">
+              Manage Customer Orders
+            </h1>
+            <p className="text-neutral-500 text-xs sm:text-sm mt-1">Review live purchases, update delivery checkpoints, and inspect package invoices.</p>
+          </div>
+        </ScrollReveal>
 
         {isLoading ? (
-          <div className="h-64 bg-slate-900 border border-slate-800 rounded-2xl animate-pulse"></div>
+          <div className="h-64 bg-neutral-200 dark:bg-neutral-800 rounded-3xl animate-pulse"></div>
         ) : (
-          <div className="bg-slate-900 border border-slate-850 rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-[#161618] border border-neutral-200/80 dark:border-neutral-800 rounded-3xl overflow-hidden shadow-soft-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-950 p-4 text-slate-500 font-bold uppercase">
-                    <th className="p-4">Order No</th>
+                  <tr className="border-b border-neutral-100 dark:border-neutral-800 bg-[#F4F3EF]/60 dark:bg-[#1C1C20]/60 p-4 text-neutral-400 font-bold uppercase text-[10px]">
+                    <th className="p-4">Order Ref</th>
                     <th className="p-4">Customer</th>
                     <th className="p-4">Date</th>
-                    <th className="p-4">Payable</th>
-                    <th className="p-4 text-center">Fulfillment</th>
+                    <th className="p-4">Payable Total</th>
+                    <th className="p-4 text-center">Fulfillment Status</th>
                     <th className="p-4 text-right">Inspect</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-850">
+                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800/80">
                   {orders?.map((order: any) => (
-                    <tr key={order.id} className="hover:bg-slate-950/20 transition">
-                      <td className="p-4 font-bold text-slate-200">{order.orderNumber}</td>
-                      <td className="p-4 text-slate-400">
-                        <div className="font-bold text-slate-300">{order.user?.name}</div>
-                        <div className="text-[10px] text-slate-500">{order.user?.email}</div>
+                    <tr key={order.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition">
+                      <td className="p-4 font-bold text-neutral-900 dark:text-white">{order.orderNumber}</td>
+                      <td className="p-4">
+                        <div className="font-semibold text-neutral-900 dark:text-white">{order.user?.name}</div>
+                        <div className="text-[10px] text-neutral-400">{order.user?.email}</div>
                       </td>
-                      <td className="p-4 text-slate-400">{new Date(order.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4 text-slate-200 font-semibold">{formatPrice(order.payableAmount)}</td>
+                      <td className="p-4 text-neutral-500">{new Date(order.createdAt).toLocaleDateString()}</td>
+                      <td className="p-4 text-neutral-900 dark:text-white font-extrabold">{formatPrice(order.payableAmount)}</td>
                       <td className="p-4 text-center">
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex items-center justify-center">
                           <select
                             value={order.status}
                             onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                            className={`bg-slate-950 text-[10px] font-bold border border-slate-800 rounded-lg p-1.5 cursor-pointer uppercase ${
-                              order.status === 'DELIVERED' || order.status === 'CANCELLED' ? 'opacity-65' : ''
-                            }`}
+                            className="bg-[#F4F3EF] dark:bg-[#1C1C20] text-neutral-900 dark:text-white text-[10px] font-bold border border-neutral-300/80 dark:border-neutral-700 rounded-full px-3 py-1.5 cursor-pointer uppercase focus:outline-none"
                           >
                             <option value="PENDING">PENDING</option>
                             <option value="PROCESSING">PROCESSING</option>
@@ -99,7 +105,7 @@ export default function AdminOrders() {
                       <td className="p-4 text-right">
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="text-slate-500 hover:text-indigo-400 transition"
+                          className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer"
                           title="Inspect Order Items & Shipping details"
                         >
                           <Eye size={16} />
@@ -113,54 +119,60 @@ export default function AdminOrders() {
           </div>
         )}
 
-        {/* ORDER DETAILS INSPECTOR MODAL */}
-        {selectedOrder && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full relative space-y-6">
+        {/* ORDER DETAILS INSPECTOR MODAL WITH CREATE PORTAL */}
+        {selectedOrder && typeof document !== 'undefined' && createPortal(
+          <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+            <div 
+              className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full relative space-y-6 shadow-2xl my-auto animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="absolute top-4 right-4 text-slate-500 hover:text-slate-300"
+                className="absolute top-6 right-6 p-2 rounded-full text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
 
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold font-display text-white">Order Details Summary</h3>
-                <p className="text-xs text-slate-400">Invoice Ref: {selectedOrder.orderNumber}</p>
+              <div className="space-y-1 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+                <h3 className="font-editorial text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                  <Package size={20} /> Order Invoice Summary
+                </h3>
+                <p className="text-xs text-neutral-400">Reference: {selectedOrder.orderNumber}</p>
               </div>
 
               {/* Items listing */}
-              <div className="space-y-3 divide-y divide-slate-850 max-h-[160px] overflow-y-auto pr-2">
+              <div className="space-y-3 divide-y divide-neutral-100 dark:divide-neutral-800/80 max-h-[180px] overflow-y-auto pr-2">
                 {selectedOrder.items?.map((item: any) => (
-                  <div key={item.id} className="pt-2.5 first:pt-0 flex justify-between text-xs text-slate-300">
+                  <div key={item.id} className="pt-2.5 first:pt-0 flex justify-between text-xs text-neutral-700 dark:text-neutral-300">
                     <div>
-                      <span className="font-bold block text-white">{item.product?.name}</span>
-                      <span className="text-[10px] text-slate-500">Price: {formatPrice(item.price)} × {item.quantity}</span>
+                      <span className="font-bold block text-neutral-900 dark:text-white">{item.product?.name}</span>
+                      <span className="text-[10px] text-neutral-400">Unit: {formatPrice(item.price)} × {item.quantity}</span>
                     </div>
-                    <span className="font-bold text-slate-100">{formatPrice(item.price * item.quantity)}</span>
+                    <span className="font-bold text-neutral-900 dark:text-white">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
 
               {/* Pricing breakdown */}
-              <div className="grid grid-cols-2 gap-4 border-t border-slate-800 pt-4 text-xs text-slate-400">
+              <div className="grid grid-cols-2 gap-4 border-t border-neutral-100 dark:border-neutral-800 pt-4 text-xs text-neutral-500">
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-500 block mb-1">Billing Info</span>
-                  <div className="font-bold text-slate-200">{selectedOrder.address?.name}</div>
+                  <span className="text-[10px] uppercase font-bold text-neutral-400 block mb-1">Shipping Details</span>
+                  <div className="font-bold text-neutral-900 dark:text-white">{selectedOrder.address?.name}</div>
                   <div>{selectedOrder.address?.phone}</div>
-                  <div>{selectedOrder.address?.street}, {selectedOrder.address?.city}</div>
+                  <div className="line-clamp-2">{selectedOrder.address?.street}, {selectedOrder.address?.city}</div>
                 </div>
                 
-                <div className="text-right">
-                  <span className="text-[10px] uppercase font-bold text-slate-500 block mb-1">Fulfillment Stats</span>
+                <div className="text-right space-y-0.5">
+                  <span className="text-[10px] uppercase font-bold text-neutral-400 block mb-1">Financials</span>
                   <div>Subtotal: {formatPrice(selectedOrder.totalAmount)}</div>
-                  <div>Discount Code: -{formatPrice(selectedOrder.discountAmount)}</div>
-                  <div className="font-bold text-indigo-400 text-sm mt-1">Paid: {formatPrice(selectedOrder.payableAmount)}</div>
+                  <div>Discount: -{formatPrice(selectedOrder.discountAmount)}</div>
+                  <div className="font-editorial font-extrabold text-neutral-900 dark:text-white text-base pt-1">Paid: {formatPrice(selectedOrder.payableAmount)}</div>
                 </div>
               </div>
 
             </div>
-          </div>
+          </div>,
+          document.body
         )}
 
       </main>

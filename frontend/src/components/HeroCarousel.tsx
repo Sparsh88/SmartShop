@@ -1,225 +1,156 @@
-import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
-
-interface Slide {
-  id: number;
-  title: string;
-  highlight: string;
-  subtitle: string;
-  badge: string;
-  image: string;
-  buttonText: string;
-  link: string;
-}
-
-const slides: Slide[] = [
-  {
-    id: 1,
-    title: 'Elevate Your Look',
-    highlight: 'Summer Outfits',
-    subtitle: 'Discover genuine leather bomber jackets, linen shirts, and StepUp mesh trainers. Make everyday comfort stylish.',
-    badge: 'New Release - Summer Collection 2026',
-    image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&auto=format&fit=crop&q=80',
-    buttonText: 'Explore Fashion',
-    link: '/products?category=fashion',
-  },
-  {
-    id: 2,
-    title: 'Active Wellness',
-    highlight: 'FitVibe Smartwatch',
-    subtitle: 'Track steps, sleep score, and real-time heart rate with GPS integration and durable design. Free express shipping on orders above ₹1,999.',
-    badge: 'Trending Fitness',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&auto=format&fit=crop&q=80',
-    buttonText: 'Explore Smartwatches',
-    link: '/products?category=electronics',
-  },
-  {
-    id: 3,
-    title: 'Café Quality At Home',
-    highlight: 'BaristaCo Station',
-    subtitle: 'Sip on thick luxurious espresso or automatic frothed milk lattes. Get 10% discount on premium home espresso machines.',
-    badge: 'Premium Kitchen - 10% OFF',
-    image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200&auto=format&fit=crop&q=80',
-    buttonText: 'Browse Coffee Makers',
-    link: '/products?category=home-kitchen',
-  },
-  {
-    id: 4,
-    title: 'Immersive Sound',
-    highlight: 'AcousticPro ANC',
-    subtitle: 'Experience studio-grade sound with active noise cancellation, custom drivers, and 45-hour battery life. Save up to 20% today.',
-    badge: 'Featured Offer - 20% OFF',
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&auto=format&fit=crop&q=80',
-    buttonText: 'Shop Audio Collection',
-    link: '/products?category=electronics',
-  },
-  {
-    id: 5,
-    title: 'Pure Radiance',
-    highlight: 'GlowRx Skincare',
-    subtitle: 'Intensely hydrate and protect your moisture barrier with pure hyaluronic acid face serums and sunscreen SPF 50.',
-    badge: 'Self-Care Essentials',
-    image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1200&auto=format&fit=crop&q=80',
-    buttonText: 'Shop Beauty Care',
-    link: '/products?category=beauty',
-  },
-];
+import { ArrowUpRight } from 'lucide-react';
 
 export default function HeroCarousel() {
-  const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
-
-  const nextSlide = useCallback(() => {
-    setDirection(1);
-    setCurrent((prev) => (prev + 1) % slides.length);
-  }, []);
-
-  const prevSlide = useCallback(() => {
-    setDirection(-1);
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 4000);
-    return () => clearInterval(timer);
-  }, [nextSlide, current]);
-
-  const slideVariants = {
-    enter: (dir: number) => ({
-      x: dir > 0 ? '100%' : '-100%',
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (dir: number) => ({
-      x: dir < 0 ? '100%' : '-100%',
-      opacity: 0,
-    }),
-  };
-
-  const handleDotClick = (idx: number) => {
-    setDirection(idx > current ? 1 : -1);
-    setCurrent(idx);
-  };
-
-  const activeSlide = slides[current];
-
   return (
-    <section className="relative w-full h-[520px] md:h-[600px] bg-neutral-950 overflow-hidden select-none -mt-16">
-      
-      {/* Background Slides */}
-      <div className="absolute inset-0 w-full h-full">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={current}
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: 'spring', stiffness: 300, damping: 30 },
-              opacity: { duration: 0.4 },
-            }}
-            className="absolute inset-0 w-full h-full"
-          >
-            {/* Background Image with Dark Vignette */}
-            <div className="absolute inset-0 bg-black/60 z-10" />
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-neutral-950/40 z-10" />
-            <img
-              src={activeSlide.image}
-              alt={activeSlide.title}
-              className="w-full h-full object-cover object-center scale-105 filter brightness-[0.8]"
-            />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Floating Animated Gradients */}
-      <div className="absolute top-10 left-1/4 w-72 h-72 bg-orange-500/15 rounded-full blur-[120px] pointer-events-none z-10 animate-pulse" />
-      <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-amber-500/15 rounded-full blur-[130px] pointer-events-none z-10 animate-pulse" />
-
-      {/* Slide Content Overlay */}
-      <div className="absolute inset-0 flex items-center justify-center z-25 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl w-full text-center space-y-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.4 }}
-              className="space-y-6"
-            >
-              {/* Offer Badge */}
-              <div>
-                <span className="inline-flex items-center text-xs uppercase tracking-widest text-orange-300 font-bold bg-orange-500/10 border border-orange-500/30 px-4 py-2 rounded-full backdrop-blur-md">
-                  {activeSlide.badge}
-                </span>
-              </div>
-
-              {/* Title & Highlight */}
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black font-display tracking-tight text-white leading-tight">
-                {activeSlide.title} <br />
-                <span className="text-white drop-shadow-[0_2px_16px_rgba(251,146,60,0.5)]">
-                  {activeSlide.highlight}
-                </span>
+    <section className="relative w-full pt-4 pb-6 sm:pt-6 sm:pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+        
+        {/* Top Section: 2 Columns (Left: Text & Social Proof | Right: Large Featured Model) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          {/* Left Column: Heading, Subtitle, CTA Button, Social Proof */}
+          <div className="lg:col-span-6 space-y-7 sm:space-y-8">
+            <div className="space-y-4 sm:space-y-5">
+              <h1 className="font-editorial text-4xl sm:text-5xl lg:text-6xl xl:text-[66px] font-black tracking-tight text-neutral-900 dark:text-white leading-[1.08]">
+                Unleash Your Style <br />
+                Shop the Latest <br />
+                Trends
               </h1>
 
-              {/* Subtitle / Description */}
-              <p className="text-neutral-200 max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed font-medium filter drop-shadow-md">
-                {activeSlide.subtitle}
+              <p className="text-neutral-500 dark:text-neutral-400 text-xs sm:text-sm max-w-md leading-relaxed">
+                Discover the latest trends & express your style effortlessly. Shop exclusive collections with premium designs, just for you!
               </p>
 
-              {/* Shop Action Button */}
-              <div className="pt-4">
+              {/* Action Buttons: Pill + Arrow circle */}
+              <div className="pt-1 flex items-center gap-2">
                 <Link
-                  to={activeSlide.link}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-8 py-4 rounded-full shadow-xl shadow-orange-500/30 transition-all hover:scale-105 active:scale-95"
+                  to="/products"
+                  className="bg-[#121212] hover:bg-black dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-950 font-bold px-7 py-3.5 rounded-full text-xs uppercase tracking-wider transition shadow-soft-sm"
                 >
-                  {activeSlide.buttonText}
-                  <ArrowRight size={18} />
+                  Shop Now
+                </Link>
+                <Link
+                  to="/products"
+                  className="w-11 h-11 rounded-full bg-[#121212] hover:bg-black dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-950 flex items-center justify-center transition shadow-soft-sm"
+                  aria-label="Shop Now"
+                >
+                  <ArrowUpRight size={16} />
                 </Link>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            </div>
+
+            {/* Social Proof & Avatar Stack */}
+            <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-neutral-200/70 dark:border-neutral-800/70">
+              <div className="space-y-1 max-w-xs">
+                <h3 className="font-editorial text-2xl sm:text-3xl font-black text-neutral-900 dark:text-white tracking-tight">
+                  25 Million+
+                </h3>
+                <p className="text-[11px] sm:text-xs text-neutral-400 leading-snug">
+                  Real reviews from our happy customers! See what fashion lovers are saying about our quality, style, and service.
+                </p>
+              </div>
+
+              {/* Customer Avatar Stack */}
+              <div className="flex items-center -space-x-2 shrink-0">
+                <img
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+                  alt="Customer 1"
+                  className="w-9 h-9 rounded-full border-2 border-white dark:border-neutral-900 object-cover"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+                  alt="Customer 2"
+                  className="w-9 h-9 rounded-full border-2 border-white dark:border-neutral-900 object-cover"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80"
+                  alt="Customer 3"
+                  className="w-9 h-9 rounded-full border-2 border-white dark:border-neutral-900 object-cover"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+                  alt="Customer 4"
+                  className="w-9 h-9 rounded-full border-2 border-white dark:border-neutral-900 object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Featured Large Editorial Showcase Card with rich hover effect */}
+          <Link
+            to="/products?category=full-sets"
+            className="lg:col-span-6 relative rounded-[32px] sm:rounded-[40px] overflow-hidden bg-[#F4F3EF] dark:bg-[#1C1C20] h-[380px] sm:h-[440px] lg:h-[460px] border border-neutral-200/60 dark:border-neutral-800 shadow-soft-sm group cursor-pointer block transition-all duration-500 hover:shadow-soft-xl hover:border-neutral-400 dark:hover:border-neutral-600"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1000&auto=format&fit=crop&q=80"
+              alt="Featured Look"
+              className="w-full h-full object-cover object-top filter brightness-[0.98] group-hover:scale-108 group-hover:brightness-105 group-hover:contrast-[1.02] transition-all duration-700 ease-out"
+            />
+            {/* Subtle Gradient & Floating Hover Badge */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-between p-6 sm:p-8">
+              <span className="inline-flex items-center gap-2 bg-white/95 dark:bg-neutral-900/95 text-neutral-900 dark:text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-lg transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+                <span>Explore Trend</span>
+                <ArrowUpRight size={14} />
+              </span>
+            </div>
+          </Link>
+
         </div>
+
+        {/* Bottom Section: 3 Horizontal Cards Bento Row (Model 1, Model 2, Models wearing full outfits) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 pt-2">
+          
+          {/* Card 1: Model wearing light jacket */}
+          <Link
+            to="/products?category=jackets"
+            className="relative rounded-[28px] sm:rounded-[32px] overflow-hidden bg-[#F4F3EF] dark:bg-[#1C1C20] h-60 sm:h-72 border border-neutral-200/60 dark:border-neutral-800 shadow-soft-sm group cursor-pointer block transition-all duration-500 hover:shadow-soft-lg hover:border-neutral-400 dark:hover:border-neutral-600"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&auto=format&fit=crop&q=80"
+              alt="Model Outfit Look"
+              className="w-full h-full object-cover object-center group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-white flex items-center gap-1">
+                Outerwear Edit <ArrowUpRight size={13} />
+              </span>
+            </div>
+          </Link>
+
+          {/* Card 2: Outerwear on hangers / Jacket Series */}
+          <Link
+            to="/products?category=jackets"
+            className="relative rounded-[28px] sm:rounded-[32px] overflow-hidden bg-[#F4F3EF] dark:bg-[#1C1C20] h-60 sm:h-72 border border-neutral-200/60 dark:border-neutral-800 shadow-soft-sm group cursor-pointer block transition-all duration-500 hover:shadow-soft-lg hover:border-neutral-400 dark:hover:border-neutral-600"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&auto=format&fit=crop&q=80"
+              alt="Jacket Outfit Series"
+              className="w-full h-full object-cover object-center group-hover:scale-108 group-hover:brightness-105 transition-all duration-700 ease-out"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-white flex items-center gap-1">
+                Jackets & Coats <ArrowUpRight size={13} />
+              </span>
+            </div>
+          </Link>
+
+          {/* Card 3: Models wearing full outfits card */}
+          <div className="bg-white dark:bg-[#161618] border border-neutral-200/80 dark:border-neutral-800 rounded-[28px] sm:rounded-[32px] p-6 sm:p-8 flex flex-col justify-center items-center text-center space-y-4 h-60 sm:h-72 shadow-soft-sm">
+            <h3 className="font-editorial text-2xl sm:text-3xl font-black text-neutral-900 dark:text-white max-w-[220px] leading-tight">
+              Models wearing full outfits
+            </h3>
+            <Link
+              to="/products?category=fashion"
+              className="inline-flex items-center gap-1.5 bg-[#121212] hover:bg-black dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-950 font-bold px-6 py-2.5 rounded-full text-xs uppercase tracking-wider transition shadow-soft-xs"
+            >
+              Explore now <ArrowUpRight size={13} />
+            </Link>
+          </div>
+
+        </div>
+
       </div>
-
-      {/* Left/Right Arrow Navigation */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-neutral-900/40 hover:bg-neutral-900/80 text-neutral-200 hover:text-neutral-50 border border-neutral-800/40 hover:border-neutral-700 backdrop-blur-md transition hover:scale-110 active:scale-95 shadow-md hidden sm:flex"
-        aria-label="Previous Slide"
-      >
-        <ChevronLeft size={22} />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-neutral-900/40 hover:bg-neutral-900/80 text-neutral-200 hover:text-neutral-50 border border-neutral-800/40 hover:border-neutral-700 backdrop-blur-md transition hover:scale-110 active:scale-95 shadow-md hidden sm:flex"
-        aria-label="Next Slide"
-      >
-        <ChevronRight size={22} />
-      </button>
-
-      {/* Indicator Dots */}
-      <div className="absolute bottom-6 left-0 right-0 z-30 flex justify-center gap-2.5">
-        {slides.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleDotClick(idx)}
-            className={`h-2.5 rounded-full transition-all duration-300 ${
-              current === idx ? 'w-8 bg-orange-500 shadow-md shadow-orange-500/40' : 'w-2.5 bg-neutral-700 hover:bg-neutral-500'
-            }`}
-            aria-label={`Go to slide ${idx + 1}`}
-          />
-        ))}
-      </div>
-
     </section>
   );
 }

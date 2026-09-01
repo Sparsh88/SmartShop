@@ -79,72 +79,7 @@ const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 300): Promi
 
 
 // Resilient default products for offline/cold-start environments
-const defaultFallbackProducts = [
-  {
-    id: 'f1111111-1111-1111-1111-111111111111',
-    name: 'Sony WH-1000XM5 Wireless Headphones',
-    description: 'Industry-leading noise canceling with Auto NC Optimizer and crystal clear hands-free calling.',
-    price: 34990,
-    discount: 15,
-    discountPrice: 29741,
-    rating: 4.8,
-    stock: 25,
-    brand: 'Sony',
-    images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600'],
-    isFeatured: true,
-    isTrending: true,
-    createdAt: new Date(),
-    category: { id: 'c1', name: 'Electronics', slug: 'electronics' },
-  },
-  {
-    id: 'f2222222-2222-2222-2222-222222222222',
-    name: 'Apple Watch Series 9',
-    description: 'Smartwatch with powerful health sensors, advanced workout metrics, and always-on Retina display.',
-    price: 41900,
-    discount: 10,
-    discountPrice: 37710,
-    rating: 4.9,
-    stock: 18,
-    brand: 'Apple',
-    images: ['https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600'],
-    isFeatured: true,
-    isTrending: true,
-    createdAt: new Date(),
-    category: { id: 'c1', name: 'Electronics', slug: 'electronics' },
-  },
-  {
-    id: 'f3333333-3333-3333-3333-333333333333',
-    name: 'Nike Air Zoom Pegasus 40',
-    description: 'A responsive ride for everyday running with engineered mesh upper and dual Zoom Air units.',
-    price: 11895,
-    discount: 20,
-    discountPrice: 9516,
-    rating: 4.7,
-    stock: 30,
-    brand: 'Nike',
-    images: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600'],
-    isFeatured: true,
-    isTrending: true,
-    createdAt: new Date(),
-    category: { id: 'c2', name: 'Fashion', slug: 'fashion' },
-  },
-  {
-    id: 'f4444444-4444-4444-4444-444444444444',
-    name: 'Atomic Habits by James Clear',
-    description: 'An Easy & Proven Way to Build Good Habits & Break Bad Ones. Over 10 million copies sold.',
-    price: 799,
-    discount: 25,
-    discountPrice: 599,
-    rating: 4.9,
-    stock: 50,
-    brand: 'Penguin Random House',
-    images: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600'],
-    isFeatured: true,
-    isTrending: true,
-    createdAt: new Date(),
-    category: { id: 'c4', name: 'Books', slug: 'books' },
-  },
-];
+const defaultFallbackProducts = fallbackProducts.slice(0, 8);
 
 /**
  * 1. Track user/guest interactions asynchronously

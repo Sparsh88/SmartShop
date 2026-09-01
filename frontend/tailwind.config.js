@@ -10,36 +10,60 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        display: ['Outfit', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'Outfit', 'sans-serif'],
+        editorial: ['Plus Jakarta Sans', 'Outfit', 'sans-serif'],
       },
       colors: {
-        slate: colors.neutral, // Automatically remaps all slate-X classes to neutral-X (charcoal)
-        primary: {
-          50: '#f5f3ff',
-          100: '#eedeff',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          505: '#8b5cf6', // Indigo
-          500: '#6366f1', // Main Primary
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
+        slate: colors.neutral,
+        surface: {
+          50: '#FAF9F6',
+          100: '#F5F5F2',
+          200: '#EFEFEB',
+          300: '#E5E4DE',
+          400: '#D4D2CA',
+          500: '#A3A096',
         },
-        darkbg: {
-          50: '#1e293b',
-          100: '#0f172a',
-          200: '#020617', // Deep pitch black
-        }
+        obsidian: {
+          DEFAULT: '#121212',
+          card: '#18181B',
+          muted: '#27272A',
+          border: '#3F3F46',
+        },
+        fashion: {
+          black: '#111111',
+          charcoal: '#1A1A1A',
+          cream: '#FAF9F6',
+          sand: '#F4F3EF',
+          stone: '#EFEFED',
+          border: '#E8E7E3',
+          darkbg: '#0D0D0E',
+          darkcard: '#161618',
+          darkborder: '#232326',
+        },
+        primary: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#18181b', // Obsidian Primary
+          600: '#09090b',
+          700: '#000000',
+        },
       },
       boxShadow: {
-        'glass-light': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
-        'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        'soft-sm': '0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 4px -1px rgba(0, 0, 0, 0.02)',
+        'soft-md': '0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 4px 12px -2px rgba(0, 0, 0, 0.03)',
+        'soft-xl': '0 20px 40px -8px rgba(0, 0, 0, 0.08), 0 8px 16px -4px rgba(0, 0, 0, 0.04)',
+        'glass-light': '0 8px 32px 0 rgba(0, 0, 0, 0.05)',
+        'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.4)',
+      },
+      borderRadius: {
+        '3xl': '24px',
+        '4xl': '32px',
       },
     },
   },
   plugins: [],
-}
+};

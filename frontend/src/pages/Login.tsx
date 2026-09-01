@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { toast } from '../store/toastStore';
-import { LogIn, Mail, Lock } from 'lucide-react';
+import { LogIn, Mail, Lock, ArrowUpRight } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 
 const loginSchema = z.object({
@@ -26,9 +26,14 @@ export default function Login() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
   const onSubmit = async (values: LoginFormValues) => {
@@ -46,70 +51,77 @@ export default function Login() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 animate-page-enter">
-      <ScrollReveal direction="up" distance={30} duration={0.6} className="max-w-md w-full">
-        <div className="w-full bg-slate-900 border border-slate-850 p-8 rounded-3xl shadow-lg space-y-6 relative overflow-hidden">
+      <ScrollReveal direction="up" distance={25} duration={0.6} className="max-w-md w-full">
+        <div className="w-full bg-white dark:bg-[#161618] border border-neutral-200/80 dark:border-neutral-800 p-8 sm:p-10 rounded-3xl shadow-soft-sm space-y-6 relative">
           
-          {/* Decorative Blur BG */}
-          <div className="absolute -top-10 -right-10 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl"></div>
-
           <div className="text-center space-y-2">
-            <h2 className="text-3xl font-black font-display text-white">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 block">
+              Access Your Account
+            </span>
+            <h2 className="font-editorial text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
               Welcome Back
             </h2>
-            <p className="text-slate-400 text-sm">
-              Enter credentials to access your SmartShop account
+            <p className="text-neutral-500 text-xs sm:text-sm">
+              Enter your credentials to manage orders, wishlist & profile.
             </p>
           </div>
 
           {/* LOGIN FORM */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} autoComplete="off" className="space-y-4">
             
             {/* Email */}
-            <div className="flex flex-col">
-              <span className="text-xs text-slate-500 font-bold mb-1.5">Email Address</span>
+            <div className="space-y-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 block">Email Address</span>
               <div className="relative">
                 <input
                   type="email"
                   placeholder="name@example.com"
+                  autoComplete="off"
                   {...register('email')}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl py-3 pl-10 pr-4 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                 />
-                <Mail size={16} className="absolute left-3.5 top-3.5 text-slate-500" />
+                <Mail size={16} className="absolute left-3.5 top-3.5 text-neutral-400" />
               </div>
-              {errors.email && <span className="text-rose-500 text-xs mt-1">{errors.email.message}</span>}
+              {errors.email && <span className="text-rose-500 text-xs">{errors.email.message}</span>}
             </div>
 
             {/* Password */}
-            <div className="flex flex-col">
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="text-xs text-slate-500 font-bold">Password</span>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500">Password</span>
               </div>
               <div className="relative">
                 <input
                   type="password"
                   placeholder="••••••••"
+                  autoComplete="new-password"
                   {...register('password')}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl py-3 pl-10 pr-4 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                 />
-                <Lock size={16} className="absolute left-3.5 top-3.5 text-slate-500" />
+                <Lock size={16} className="absolute left-3.5 top-3.5 text-neutral-400" />
               </div>
-              {errors.password && <span className="text-rose-500 text-xs mt-1">{errors.password.message}</span>}
+              {errors.password && <span className="text-rose-500 text-xs">{errors.password.message}</span>}
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-orange-500/25 active:scale-[0.99]"
+              className="w-full btn-pill-arrow group justify-between px-6 py-3.5 shadow-soft-md disabled:opacity-50 mt-2"
             >
-              Sign In <LogIn size={16} />
+              <span className="text-xs font-bold uppercase tracking-wider">
+                {isLoading ? 'Signing In...' : 'Sign In'}
+              </span>
+              <div className="arrow-circle">
+                <ArrowUpRight size={16} />
+              </div>
             </button>
           </form>
 
           {/* Form Footer */}
-          <div className="text-center text-xs text-slate-500">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-orange-400 font-bold hover:underline">
-              Create Account
+          <div className="text-center text-xs text-neutral-500 pt-2 border-t border-neutral-100 dark:border-neutral-800">
+            Don't have an account yet?{' '}
+            <Link to="/register" className="font-bold text-neutral-900 dark:text-white underline underline-offset-2 hover:opacity-75 transition">
+              Create an Account
             </Link>
           </div>
 

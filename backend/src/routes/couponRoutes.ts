@@ -6,14 +6,14 @@ import {
   toggleCouponStatus,
   deleteCoupon,
 } from '../controllers/couponController';
-import { protect, authorize } from '../middleware/authMiddleware';
+import { protect, authorize, optionalProtect } from '../middleware/authMiddleware';
 import { Role } from '@prisma/client';
 
 const router = Router();
 
-// Retrieve valid coupons
-router.get('/', protect, getCoupons);
-router.post('/validate', protect, validateCoupon);
+// Retrieve valid coupons (Public/Customer gets active coupons, Admin gets all)
+router.get('/', optionalProtect, getCoupons);
+router.post('/validate', optionalProtect, validateCoupon);
 
 // Admin-only operations
 router.post('/', protect, authorize(Role.ADMIN), createCoupon);

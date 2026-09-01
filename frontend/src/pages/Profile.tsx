@@ -12,6 +12,7 @@ import {
   Trash,
   CheckCircle,
   Clock,
+  ArrowUpRight,
 } from 'lucide-react';
 import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from '../components/ScrollReveal';
 
@@ -185,114 +186,121 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-page-enter">
-      <ScrollReveal direction="up" distance={25} duration={0.6}>
-        <h1 className="text-3xl font-black font-display text-white mb-8">My Account</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 animate-page-enter space-y-8">
+      <ScrollReveal direction="up" distance={20} duration={0.6}>
+        <div className="pb-6 border-b border-neutral-200/80 dark:border-neutral-800">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 block mb-1">
+            Account Management
+          </span>
+          <h1 className="font-editorial text-3xl sm:text-4xl font-black text-neutral-900 dark:text-white tracking-tight">
+            My Account
+          </h1>
+        </div>
       </ScrollReveal>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         
         {/* Left Side: Sidebar Tabs Navigation */}
         <aside className="space-y-2 lg:col-span-1">
-          <ScrollReveal direction="right" distance={20} duration={0.6} className="space-y-2">
+          <ScrollReveal direction="right" distance={20} duration={0.6} className="space-y-1.5">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs uppercase tracking-wider font-bold transition ${
                 activeTab === 'profile'
-                  ? 'bg-indigo-650 bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#121212] text-white dark:bg-white dark:text-neutral-950 shadow-soft-sm'
+                  : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800'
               }`}
             >
-              <UserIcon size={18} /> Profile Details
+              <UserIcon size={16} /> Profile Details
             </button>
             
             <button
               onClick={() => setActiveTab('addresses')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs uppercase tracking-wider font-bold transition ${
                 activeTab === 'addresses'
-                  ? 'bg-indigo-650 bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#121212] text-white dark:bg-white dark:text-neutral-950 shadow-soft-sm'
+                  : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800'
               }`}
             >
-              <MapPin size={18} /> Address Book
+              <MapPin size={16} /> Address Book
             </button>
 
             <button
               onClick={() => setActiveTab('security')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs uppercase tracking-wider font-bold transition ${
                 activeTab === 'security'
-                  ? 'bg-indigo-650 bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#121212] text-white dark:bg-white dark:text-neutral-950 shadow-soft-sm'
+                  : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800'
               }`}
             >
-              <Lock size={18} /> Account Security
+              <Lock size={16} /> Security
             </button>
 
             <button
               onClick={() => setActiveTab('notifications')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs uppercase tracking-wider font-bold transition ${
                 activeTab === 'notifications'
-                  ? 'bg-indigo-650 bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#121212] text-white dark:bg-white dark:text-neutral-950 shadow-soft-sm'
+                  : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800'
               }`}
             >
-              <Bell size={18} /> Notifications
+              <Bell size={16} /> Notifications
             </button>
           </ScrollReveal>
         </aside>
 
         {/* Right Side: Tab Viewports */}
-        <main className="lg:col-span-3 bg-slate-900 border border-slate-850 p-6 sm:p-8 rounded-3xl shadow-sm">
+        <main className="lg:col-span-3 bg-white dark:bg-[#161618] border border-neutral-200/80 dark:border-neutral-800 p-6 sm:p-8 rounded-3xl shadow-soft-sm">
           
           {/* TAB 1: PROFILE DETAILS */}
           {activeTab === 'profile' && (
             <ScrollReveal direction="up" distance={25} duration={0.6}>
               <form onSubmit={handleUpdateProfile} className="space-y-6">
-                <h3 className="text-xl font-bold font-display text-white border-b border-slate-800 pb-3">
-                  Profile Information
+                <h3 className="font-editorial text-xl font-bold text-neutral-900 dark:text-white border-b border-neutral-100 dark:border-neutral-800 pb-4">
+                  Personal Information
                 </h3>
 
                 {/* Avatar Upload */}
                 <div className="flex items-center gap-5">
-                  <div className="relative w-24 h-24 rounded-full overflow-hidden border border-slate-800 bg-slate-950">
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden border border-neutral-200 dark:border-neutral-700 bg-[#F4F3EF] dark:bg-[#1E1E22]">
                     {avatarPreview ? (
                       <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-600">
+                      <div className="w-full h-full flex items-center justify-center text-neutral-400">
                         <UserIcon size={32} />
                       </div>
                     )}
-                    <label className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 flex items-center justify-center text-white cursor-pointer transition">
+                    <label className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center text-white cursor-pointer transition">
                       <Camera size={18} />
                       <input type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
                     </label>
                   </div>
-                  <div className="text-xs text-slate-500">
-                    <p className="font-bold text-slate-300">Upload profile image</p>
-                    <p className="mt-1">Supports PNG, JPG, GIF up to 5MB.</p>
+                  <div className="text-xs text-neutral-500">
+                    <p className="font-bold text-neutral-900 dark:text-white">Profile Photo</p>
+                    <p className="mt-0.5">Click photo to update. PNG, JPG up to 5MB.</p>
                   </div>
                 </div>
 
                 {/* Name & Email Inputs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-slate-500 font-bold mb-1.5">Full Name</span>
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 block">Full Name</span>
                     <input
                       required
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl p-3 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-slate-500 font-bold mb-1.5">Email Address</span>
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 block">Email Address</span>
                     <input
                       required
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl p-3 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                     />
                   </div>
                 </div>
@@ -300,9 +308,14 @@ export default function Profile() {
                 <button
                   type="submit"
                   disabled={isUpdatingProfile}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition"
+                  className="btn-pill-arrow group justify-between px-6 py-3 shadow-soft-sm disabled:opacity-50"
                 >
-                  {isUpdatingProfile ? 'Saving Details...' : 'Save Profile Changes'}
+                  <span className="text-xs font-bold uppercase tracking-wider">
+                    {isUpdatingProfile ? 'Saving...' : 'Save Profile Changes'}
+                  </span>
+                  <div className="arrow-circle">
+                    <ArrowUpRight size={14} />
+                  </div>
                 </button>
               </form>
             </ScrollReveal>
@@ -311,11 +324,11 @@ export default function Profile() {
           {/* TAB 2: ADDRESS BOOK */}
           {activeTab === 'addresses' && (
             <ScrollReveal direction="up" distance={25} duration={0.6} className="space-y-6">
-              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 className="text-xl font-bold font-display text-white">Address Book</h3>
+              <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-4">
+                <h3 className="font-editorial text-xl font-bold text-neutral-900 dark:text-white">Shipping Address Book</h3>
                 <button
                   onClick={() => setShowAddressForm(!showAddressForm)}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1 transition"
+                  className="bg-[#121212] hover:bg-black dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-950 text-xs font-bold py-2 px-4 rounded-full flex items-center gap-1 uppercase tracking-wider transition"
                 >
                   <Plus size={14} /> Add Address
                 </button>
@@ -323,80 +336,80 @@ export default function Profile() {
 
               {/* Add Address Form */}
               {showAddressForm && (
-                <form onSubmit={handleAddAddress} className="bg-slate-950 p-5 border border-slate-800 rounded-2xl grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-slate-500 font-bold mb-1">Full Name</span>
+                <form onSubmit={handleAddAddress} className="bg-[#F4F3EF] dark:bg-[#1E1E22] p-5 border border-neutral-300/80 dark:border-neutral-700 rounded-2xl grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">Full Name</span>
                     <input
                       required
                       type="text"
                       value={addressForm.name}
                       onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })}
-                      className="bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none"
+                      className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-slate-500 font-bold mb-1">Phone Number</span>
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">Phone Number</span>
                     <input
                       required
                       type="text"
                       value={addressForm.phone}
                       onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                      className="bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none"
+                      className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
                     />
                   </div>
-                  <div className="flex flex-col sm:col-span-2">
-                    <span className="text-xs text-slate-500 font-bold mb-1">Street Address</span>
+                  <div className="space-y-1 sm:col-span-2">
+                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">Street Address</span>
                     <input
                       required
                       type="text"
                       value={addressForm.street}
                       onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
-                      className="bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none"
+                      className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-slate-500 font-bold mb-1">City</span>
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">City</span>
                     <input
                       required
                       type="text"
                       value={addressForm.city}
                       onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                      className="bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none"
+                      className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-slate-500 font-bold mb-1">State</span>
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">State</span>
                     <input
                       required
                       type="text"
                       value={addressForm.state}
                       onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
-                      className="bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none"
+                      className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-slate-500 font-bold mb-1">ZIP / Postal Code</span>
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">Postal Code</span>
                     <input
                       required
                       type="text"
                       value={addressForm.postalCode}
                       onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
-                      className="bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none"
+                      className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-slate-500 font-bold mb-1">Country</span>
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">Country</span>
                     <input
                       required
                       type="text"
                       value={addressForm.country}
                       onChange={(e) => setAddressForm({ ...addressForm, country: e.target.value })}
-                      className="bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none"
+                      className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="sm:col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition"
+                    className="sm:col-span-2 bg-[#121212] hover:bg-black dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-950 font-bold py-2.5 rounded-full text-xs uppercase tracking-wider transition"
                   >
                     Save Address
                   </button>
@@ -405,19 +418,17 @@ export default function Profile() {
 
               {/* Saved Addresses list */}
               {addresses.length === 0 ? (
-                <p className="text-slate-500 text-sm">No saved addresses. Click Add Address to include shipping details.</p>
+                <p className="text-neutral-500 text-xs py-2">No saved addresses. Click Add Address above to add one.</p>
               ) : (
-                <ScrollRevealGroup staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <ScrollRevealGroup staggerDelay={0.06} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {addresses.map((addr) => (
                     <ScrollRevealItem key={addr.id} direction="up" distance={20}>
-                      <div
-                        className="p-4 border border-slate-800 bg-slate-950/20 rounded-2xl flex justify-between items-start gap-4"
-                      >
-                        <div className="text-xs text-slate-400 space-y-1">
-                          <div className="font-bold text-white flex items-center gap-1.5">
+                      <div className="p-5 border border-neutral-200/80 dark:border-neutral-800 bg-[#F4F3EF] dark:bg-[#1E1E22] rounded-2xl flex justify-between items-start gap-4 shadow-soft-sm">
+                        <div className="text-xs text-neutral-500 space-y-1">
+                          <div className="font-bold text-neutral-900 dark:text-white flex items-center gap-1.5">
                             {addr.name}
                             {addr.isDefault && (
-                              <span className="bg-indigo-500/10 text-indigo-400 font-bold text-[9px] px-2 py-0.5 rounded uppercase">
+                              <span className="bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-bold text-[9px] px-2 py-0.5 rounded uppercase">
                                 Default
                               </span>
                             )}
@@ -430,7 +441,7 @@ export default function Profile() {
 
                         <button
                           onClick={() => handleDeleteAddress(addr.id)}
-                          className="text-slate-600 hover:text-red-500 transition"
+                          className="text-neutral-400 hover:text-rose-500 transition p-1"
                           title="Delete Address"
                         >
                           <Trash size={15} />
@@ -447,49 +458,49 @@ export default function Profile() {
           {activeTab === 'security' && (
             <ScrollReveal direction="up" distance={25} duration={0.6}>
               <form onSubmit={handleChangePassword} className="space-y-6">
-                <h3 className="text-xl font-bold font-display text-white border-b border-slate-800 pb-3">
-                  Update Password
+                <h3 className="font-editorial text-xl font-bold text-neutral-900 dark:text-white border-b border-neutral-100 dark:border-neutral-800 pb-4">
+                  Password Security
                 </h3>
 
-                <div className="flex flex-col max-w-md">
-                  <span className="text-xs text-slate-500 font-bold mb-1.5">Current Password</span>
+                <div className="space-y-1 max-w-md">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 block">Current Password</span>
                   <input
                     required
                     type="password"
                     value={oldPassword}
                     onChange={(e) => setOldPassword(e.target.value)}
-                    className="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none"
+                    className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl p-3 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                   />
                 </div>
 
-                <div className="flex flex-col max-w-md">
-                  <span className="text-xs text-slate-500 font-bold mb-1.5">New Password</span>
+                <div className="space-y-1 max-w-md">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 block">New Password</span>
                   <input
                     required
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none"
+                    className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl p-3 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                   />
                 </div>
 
-                <div className="flex flex-col max-w-md">
-                  <span className="text-xs text-slate-500 font-bold mb-1.5">Confirm New Password</span>
+                <div className="space-y-1 max-w-md">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 block">Confirm New Password</span>
                   <input
                     required
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none"
+                    className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl p-3 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isChangingPassword}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition"
+                  className="bg-[#121212] hover:bg-black dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-950 font-bold py-3 px-8 rounded-full text-xs uppercase tracking-wider transition shadow-soft-sm"
                 >
-                  {isChangingPassword ? 'Updating Password...' : 'Change Password'}
+                  {isChangingPassword ? 'Updating...' : 'Update Password'}
                 </button>
               </form>
             </ScrollReveal>
@@ -498,12 +509,12 @@ export default function Profile() {
           {/* TAB 4: NOTIFICATIONS */}
           {activeTab === 'notifications' && (
             <ScrollReveal direction="up" distance={25} duration={0.6} className="space-y-6">
-              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 className="text-xl font-bold font-display text-white">Notifications Inbox</h3>
+              <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-4">
+                <h3 className="font-editorial text-xl font-bold text-neutral-900 dark:text-white">Notifications Inbox</h3>
                 {notifications.some((n) => !n.isRead) && (
                   <button
                     onClick={handleMarkAllRead}
-                    className="text-xs text-indigo-400 hover:text-indigo-300 font-bold"
+                    className="text-xs font-bold text-neutral-900 dark:text-white underline underline-offset-2 hover:opacity-75"
                   >
                     Mark All As Read
                   </button>
@@ -511,29 +522,29 @@ export default function Profile() {
               </div>
 
               {notifications.length === 0 ? (
-                <p className="text-slate-500 text-sm">Your notifications inbox is empty.</p>
+                <p className="text-neutral-500 text-xs py-2">Your notifications inbox is empty.</p>
               ) : (
-                <ScrollRevealGroup staggerDelay={0.08} className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                <ScrollRevealGroup staggerDelay={0.06} className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
                   {notifications.map((notif) => (
                     <ScrollRevealItem key={notif.id} direction="up" distance={20}>
                       <div
                         className={`p-4 border rounded-2xl flex gap-3.5 transition ${
                           notif.isRead
-                            ? 'border-slate-800 bg-slate-950/20 text-slate-400'
-                            : 'border-indigo-500/30 bg-indigo-950/10 text-slate-200'
+                            ? 'border-neutral-200/80 dark:border-neutral-800 bg-[#F4F3EF] dark:bg-[#1E1E22] text-neutral-400'
+                            : 'border-neutral-900 dark:border-white bg-white dark:bg-[#161618] text-neutral-900 dark:text-white shadow-soft-sm'
                         }`}
                       >
-                        <div className="mt-1">
+                        <div className="mt-0.5">
                           {notif.isRead ? (
-                            <Clock size={16} className="text-slate-600" />
+                            <Clock size={16} className="text-neutral-400" />
                           ) : (
-                            <CheckCircle size={16} className="text-indigo-400" />
+                            <CheckCircle size={16} className="text-emerald-500" />
                           )}
                         </div>
                         <div className="space-y-1">
                           <h4 className="font-bold text-xs uppercase tracking-wider">{notif.title}</h4>
-                          <p className="text-sm leading-relaxed">{notif.message}</p>
-                          <span className="text-[10px] text-slate-500 block">
+                          <p className="text-xs leading-relaxed">{notif.message}</p>
+                          <span className="text-[10px] text-neutral-400 block">
                             {new Date(notif.createdAt).toLocaleString()}
                           </span>
                         </div>
