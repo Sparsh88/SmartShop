@@ -342,6 +342,7 @@ export default function Profile() {
                     <input
                       required
                       type="text"
+                      placeholder="Your full name"
                       value={addressForm.name}
                       onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })}
                       className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
@@ -352,6 +353,7 @@ export default function Profile() {
                     <input
                       required
                       type="text"
+                      placeholder="+91 98765 43210"
                       value={addressForm.phone}
                       onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
                       className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
@@ -362,6 +364,7 @@ export default function Profile() {
                     <input
                       required
                       type="text"
+                      placeholder="Flat, House no., Building, Street / Area"
                       value={addressForm.street}
                       onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
                       className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
@@ -372,6 +375,7 @@ export default function Profile() {
                     <input
                       required
                       type="text"
+                      placeholder="City / Town"
                       value={addressForm.city}
                       onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
                       className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
@@ -382,6 +386,7 @@ export default function Profile() {
                     <input
                       required
                       type="text"
+                      placeholder="State / Province"
                       value={addressForm.state}
                       onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
                       className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
@@ -392,6 +397,7 @@ export default function Profile() {
                     <input
                       required
                       type="text"
+                      placeholder="PIN / Postal Code"
                       value={addressForm.postalCode}
                       onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
                       className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"
@@ -402,6 +408,7 @@ export default function Profile() {
                     <input
                       required
                       type="text"
+                      placeholder="Country"
                       value={addressForm.country}
                       onChange={(e) => setAddressForm({ ...addressForm, country: e.target.value })}
                       className="w-full bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none"

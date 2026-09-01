@@ -51,6 +51,10 @@ export default function Checkout() {
       if (addrs.length > 0) {
         const def = addrs.find((a: any) => a.isDefault) || addrs[0];
         setSelectedAddressId(def.id);
+        setShowAddressForm(false);
+      } else {
+        setSelectedAddressId('');
+        setShowAddressForm(true);
       }
     } catch (err) {
       toast.error('Error fetching addresses');
@@ -226,6 +230,7 @@ export default function Checkout() {
                     <input
                       required
                       type="text"
+                      placeholder="Your full name"
                       value={addressForm.name}
                       onChange={(e: any) => setAddressForm({ ...addressForm, name: e.target.value })}
                       className="bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white"
@@ -236,6 +241,7 @@ export default function Checkout() {
                     <input
                       required
                       type="text"
+                      placeholder="+91 98765 43210"
                       value={addressForm.phone}
                       onChange={(e: any) => setAddressForm({ ...addressForm, phone: e.target.value })}
                       className="bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white"
@@ -246,6 +252,7 @@ export default function Checkout() {
                     <input
                       required
                       type="text"
+                      placeholder="Flat, House no., Building, Street / Area"
                       value={addressForm.street}
                       onChange={(e: any) => setAddressForm({ ...addressForm, street: e.target.value })}
                       className="bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white"
@@ -256,6 +263,7 @@ export default function Checkout() {
                     <input
                       required
                       type="text"
+                      placeholder="City / Town"
                       value={addressForm.city}
                       onChange={(e: any) => setAddressForm({ ...addressForm, city: e.target.value })}
                       className="bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white"
@@ -266,6 +274,7 @@ export default function Checkout() {
                     <input
                       required
                       type="text"
+                      placeholder="State / Province"
                       value={addressForm.state}
                       onChange={(e: any) => setAddressForm({ ...addressForm, state: e.target.value })}
                       className="bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white"
@@ -276,6 +285,7 @@ export default function Checkout() {
                     <input
                       required
                       type="text"
+                      placeholder="PIN / Postal Code"
                       value={addressForm.postalCode}
                       onChange={(e: any) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
                       className="bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white"
@@ -286,6 +296,7 @@ export default function Checkout() {
                     <input
                       required
                       type="text"
+                      placeholder="Country"
                       value={addressForm.country}
                       onChange={(e: any) => setAddressForm({ ...addressForm, country: e.target.value })}
                       className="bg-white dark:bg-[#161618] border border-neutral-300/80 dark:border-neutral-700 rounded-xl p-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white"

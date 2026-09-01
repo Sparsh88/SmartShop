@@ -59,23 +59,10 @@ const userWishlists = new Map<string, string[]>(); // userId -> productIds[]
 const userAddresses = new Map<string, FallbackAddress[]>();
 const globalOrders: FallbackOrder[] = [];
 
-// Helper: Seed default addresses for test users
+// Helper: Initialize empty address list for users (user enters their own delivery address)
 const getOrCreateAddresses = (userId: string): FallbackAddress[] => {
   if (!userAddresses.has(userId)) {
-    const defaultAddr: FallbackAddress = {
-      id: `addr-${userId}-default`,
-      userId,
-      name: 'Sparsh Chauhan',
-      phone: '+91 70889 51914',
-      street: 'Lovely Professional University, GT Road',
-      city: 'Phagwara',
-      state: 'Punjab',
-      postalCode: '144411',
-      country: 'India',
-      isDefault: true,
-      createdAt: new Date(),
-    };
-    userAddresses.set(userId, [defaultAddr]);
+    userAddresses.set(userId, []);
   }
   return userAddresses.get(userId)!;
 };
