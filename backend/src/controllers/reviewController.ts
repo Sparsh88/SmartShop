@@ -4,9 +4,10 @@ import prisma from '../config/db';
 import { BadRequestError, NotFoundError, ForbiddenError } from '../utils/errors';
 import { OrderStatus } from '@prisma/client';
 import { z } from 'zod';
+import { getFallbackReviews, addFallbackReview } from '../utils/ecomFallback';
 
 const reviewSchema = z.object({
-  productId: z.string().uuid('Invalid Product ID'),
+  productId: z.string().min(1, 'Product ID is required'),
   rating: z.number().int().min(1).max(5, 'Rating must be between 1 and 5'),
   comment: z.string().min(3, 'Comment must be at least 3 characters'),
 });
@@ -15,73 +16,64 @@ const reviewSchema = z.object({
 export const addProductReview = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.id;
+    const userName = (req.user as any)?.name || 'Verified Customer';
     const validatedData = reviewSchema.parse(req.body);
     const { productId, rating, comment } = validatedData;
 
     if (!userId) return next(new BadRequestError('User not authenticated'));
 
-    // Check if product exists (DB or fallback)
-    let product: any = null;
     try {
-      product = await prisma.product.findUnique({ where: { id: productId } });
-    } catch (_e) {}
-
-    // Check if user has purchased the item for verified badge tracking
-    let isVerifiedPurchase = false;
-    try {
-      const order = await prisma.order.findFirst({
+      // Try Database Upsert
+      const review = await prisma.review.upsert({
         where: {
-          userId,
-          items: {
-            some: { productId },
+          userId_productId: {
+            userId,
+            productId,
           },
         },
-      });
-      if (order) isVerifiedPurchase = true;
-    } catch (_e) {}
-
-    // Add or update review (upsert logic)
-    const review = await prisma.review.upsert({
-      where: {
-        userId_productId: {
+        update: {
+          rating,
+          comment,
+        },
+        create: {
           userId,
           productId,
-        },
-      },
-      update: {
-        rating,
-        comment,
-      },
-      create: {
-        userId,
-        productId,
-        rating,
-        comment,
-      },
-    });
-
-    // Recalculate average product rating
-    const aggregateReviews = await prisma.review.aggregate({
-      where: { productId },
-      _avg: { rating: true },
-    });
-
-    const averageRating = aggregateReviews._avg.rating || 0;
-
-    try {
-      await prisma.product.update({
-        where: { id: productId },
-        data: {
-          rating: parseFloat(averageRating.toFixed(1)),
+          rating,
+          comment,
         },
       });
-    } catch (_updateErr) {}
 
-    res.status(200).json({
-      success: true,
-      message: 'Review saved successfully',
-      review,
-    });
+      // Recalculate average product rating
+      try {
+        const aggregateReviews = await prisma.review.aggregate({
+          where: { productId },
+          _avg: { rating: true },
+        });
+
+        const averageRating = aggregateReviews._avg.rating || 0;
+
+        await prisma.product.update({
+          where: { id: productId },
+          data: {
+            rating: parseFloat(averageRating.toFixed(1)),
+          },
+        });
+      } catch (_updateErr) {}
+
+      return res.status(200).json({
+        success: true,
+        message: 'Review saved successfully',
+        review,
+      });
+    } catch (_dbErr) {
+      // Fallback in-memory review storage for custom string product IDs or DB offline
+      const fallbackReview = addFallbackReview(userId, userName, productId, rating, comment);
+      return res.status(200).json({
+        success: true,
+        message: 'Review saved successfully',
+        review: fallbackReview,
+      });
+    }
   } catch (error) {
     next(error);
   }
@@ -92,17 +84,23 @@ export const getProductReviews = async (req: Request, res: Response, next: NextF
   try {
     const { productId } = req.params;
 
-    const reviews = await prisma.review.findMany({
-      where: { productId },
-      include: {
-        user: { select: { name: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    let dbReviews: any[] = [];
+    try {
+      dbReviews = await prisma.review.findMany({
+        where: { productId },
+        include: {
+          user: { select: { name: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    } catch (_dbErr) {}
+
+    const fbReviews = getFallbackReviews(productId);
+    const combinedReviews = [...dbReviews, ...fbReviews];
 
     res.status(200).json({
       success: true,
-      reviews,
+      reviews: combinedReviews,
     });
   } catch (error) {
     next(error);

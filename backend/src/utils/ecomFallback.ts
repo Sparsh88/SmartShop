@@ -296,4 +296,57 @@ export const updateFallbackOrderStatus = (
   return order;
 };
 
+// ==========================================
+// 4. REVIEW METHODS
+// ==========================================
+
+export interface FallbackReview {
+  id: string;
+  userId: string;
+  productId: string;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+  user: { name: string };
+}
+
+const fallbackReviews = new Map<string, FallbackReview[]>();
+
+export const getFallbackReviews = (productId: string): FallbackReview[] => {
+  return fallbackReviews.get(productId) || [];
+};
+
+export const addFallbackReview = (
+  userId: string,
+  userName: string,
+  productId: string,
+  rating: number,
+  comment: string
+): FallbackReview => {
+  if (!fallbackReviews.has(productId)) {
+    fallbackReviews.set(productId, []);
+  }
+
+  const reviews = fallbackReviews.get(productId)!;
+  const existingIdx = reviews.findIndex((r) => r.userId === userId);
+
+  const review: FallbackReview = {
+    id: `rev-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    userId,
+    productId,
+    rating,
+    comment,
+    createdAt: new Date(),
+    user: { name: userName || 'Verified Customer' },
+  };
+
+  if (existingIdx !== -1) {
+    reviews[existingIdx] = review;
+  } else {
+    reviews.unshift(review);
+  }
+
+  return review;
+};
+
 
