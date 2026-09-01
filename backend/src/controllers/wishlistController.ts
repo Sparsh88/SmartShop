@@ -3,8 +3,9 @@ import { AuthenticatedRequest } from '../middleware/authMiddleware';
 import prisma from '../config/db';
 import { BadRequestError, NotFoundError } from '../utils/errors';
 import { getFallbackWishlist, toggleFallbackWishlist } from '../utils/ecomFallback';
+import { findFallbackProductById } from '../utils/catalogFallback';
 
-const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 300): Promise<T> => {
+const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 5000): Promise<T> => {
   return Promise.race([
     promise,
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error('DB_TIMEOUT')), timeoutMs)),
@@ -29,7 +30,7 @@ export const getWishlist = async (req: AuthenticatedRequest, res: Response, next
             },
           },
         }),
-        300
+        5000
       );
 
       if (!wishlist) {
@@ -44,7 +45,7 @@ export const getWishlist = async (req: AuthenticatedRequest, res: Response, next
               },
             },
           }),
-          300
+          5000
         );
       }
 
@@ -74,15 +75,30 @@ export const toggleWishlist = async (req: AuthenticatedRequest, res: Response, n
     if (!productId) return next(new BadRequestError('Product ID is required'));
 
     try {
-      const product = await withFastTimeout(prisma.product.findUnique({ where: { id: productId } }), 300);
-      if (!product) return next(new NotFoundError('Product not found'));
+      let product: any = null;
+      try {
+        product = await withFastTimeout(prisma.product.findUnique({ where: { id: productId } }), 5000);
+      } catch (_e) {}
+
+      if (!product) {
+        product = findFallbackProductById(productId);
+        if (!product) {
+          return next(new NotFoundError('Product not found'));
+        }
+        const result = toggleFallbackWishlist(userId, productId);
+        return res.status(200).json({
+          success: true,
+          message: result.inWishlist ? 'Product added to wishlist' : 'Product removed from wishlist',
+          inWishlist: result.inWishlist,
+        });
+      }
 
       let wishlist = await withFastTimeout(
         prisma.wishlist.findUnique({
           where: { userId },
           include: { products: true },
         }),
-        300
+        5000
       );
 
       if (!wishlist) {
@@ -91,7 +107,7 @@ export const toggleWishlist = async (req: AuthenticatedRequest, res: Response, n
             data: { userId },
             include: { products: true },
           }),
-          300
+          5000
         );
       }
 
@@ -107,7 +123,7 @@ export const toggleWishlist = async (req: AuthenticatedRequest, res: Response, n
               },
             },
           }),
-          300
+          5000
         );
         return res.status(200).json({
           success: true,
@@ -124,7 +140,7 @@ export const toggleWishlist = async (req: AuthenticatedRequest, res: Response, n
               },
             },
           }),
-          300
+          5000
         );
         return res.status(200).json({
           success: true,

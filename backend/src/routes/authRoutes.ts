@@ -9,6 +9,7 @@ import {
   resetPassword,
   updateProfile,
   changePassword,
+  getMe,
 } from '../controllers/authController';
 import { protect } from '../middleware/authMiddleware';
 import { upload } from '../middleware/uploadMiddleware';
@@ -24,6 +25,8 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 
 // User Profile Actions
+router.get('/me', protect, getMe);
+router.get('/profile', protect, getMe);
 router.put('/profile', protect, upload.single('avatar'), updateProfile);
 router.put('/change-password', protect, changePassword);
 

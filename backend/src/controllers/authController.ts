@@ -13,7 +13,7 @@ import {
   updateFallbackUser,
 } from '../utils/userFallback';
 
-const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 300): Promise<T> => {
+const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 5000): Promise<T> => {
   return Promise.race([
     promise,
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error('DB_TIMEOUT')), timeoutMs)),
@@ -563,4 +563,44 @@ export const changePassword = async (req: any, res: Response, next: NextFunction
     next(error);
   }
 };
+
+// 10. GET ME / CURRENT USER PROFILE
+export const getMe = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return next(new UnauthorizedError('Not authenticated'));
+
+    let user: any = null;
+    try {
+      user = await withFastTimeout(
+        prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+            role: true,
+            isVerified: true,
+            isBlocked: true,
+            createdAt: true,
+          },
+        }),
+        5000
+      );
+    } catch (_dbError) {}
+
+    if (!user) {
+      user = findFallbackUserById(userId) || req.user;
+    }
+
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 

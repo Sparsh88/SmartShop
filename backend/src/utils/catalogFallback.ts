@@ -870,3 +870,7 @@ export const fallbackProducts: FallbackProduct[] = [
     'full-sets'
   ),
 ];
+
+export const findFallbackProductById = (id: string): FallbackProduct | undefined => {
+  return fallbackProducts.find((p) => p.id === id);
+};

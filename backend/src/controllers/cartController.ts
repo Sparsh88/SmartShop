@@ -9,8 +9,9 @@ import {
   removeFromFallbackCart,
   clearFallbackCart,
 } from '../utils/ecomFallback';
+import { findFallbackProductById } from '../utils/catalogFallback';
 
-const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 300): Promise<T> => {
+const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 5000): Promise<T> => {
   return Promise.race([
     promise,
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error('DB_TIMEOUT')), timeoutMs)),
@@ -35,7 +36,7 @@ export const getCart = async (req: AuthenticatedRequest, res: Response, next: Ne
             },
           },
         }),
-        300
+        5000
       );
 
       if (!cart) {
@@ -50,7 +51,7 @@ export const getCart = async (req: AuthenticatedRequest, res: Response, next: Ne
               },
             },
           }),
-          300
+          5000
         );
       }
 
@@ -80,22 +81,42 @@ export const addToCart = async (req: AuthenticatedRequest, res: Response, next: 
     if (!productId) return next(new BadRequestError('Product ID is required'));
 
     try {
-      const [product, cart] = await withFastTimeout(
-        Promise.all([
-          prisma.product.findUnique({ where: { id: productId } }),
-          prisma.cart.findUnique({
-            where: { userId },
-            include: {
-              items: {
-                where: { productId },
-              },
-            },
-          }),
-        ]),
-        300
-      );
+      let product: any = null;
+      let cart: any = null;
 
-      if (!product) return next(new NotFoundError('Product not found'));
+      try {
+        [product, cart] = await withFastTimeout(
+          Promise.all([
+            prisma.product.findUnique({ where: { id: productId } }),
+            prisma.cart.findUnique({
+              where: { userId },
+              include: {
+                items: {
+                  where: { productId },
+                },
+              },
+            }),
+          ]),
+          5000
+        );
+      } catch (_e) {
+        // DB timeout / error
+      }
+
+      if (!product) {
+        product = findFallbackProductById(productId);
+        if (!product) {
+          return next(new NotFoundError('Product not found'));
+        }
+        // Fallback product -> route to in-memory fallback cart
+        const updatedCart = addToFallbackCart(userId, productId, quantity);
+        return res.status(200).json({
+          success: true,
+          message: 'Product added to cart successfully',
+          cart: updatedCart,
+        });
+      }
+
       if (product.stock < quantity) {
         return next(new BadRequestError(`Only ${product.stock} items in stock.`));
       }
@@ -122,7 +143,7 @@ export const addToCart = async (req: AuthenticatedRequest, res: Response, next: 
               },
             },
           }),
-          300
+          5000
         );
       } else {
         const existingItem = cart.items[0];
@@ -137,7 +158,7 @@ export const addToCart = async (req: AuthenticatedRequest, res: Response, next: 
               where: { id: existingItem.id },
               data: { quantity: newQty },
             }),
-            300
+            5000
           );
         } else {
           await withFastTimeout(
@@ -148,7 +169,7 @@ export const addToCart = async (req: AuthenticatedRequest, res: Response, next: 
                 quantity,
               },
             }),
-            300
+            5000
           );
         }
 
@@ -163,7 +184,7 @@ export const addToCart = async (req: AuthenticatedRequest, res: Response, next: 
               },
             },
           }),
-          300
+          5000
         );
       }
 
@@ -206,7 +227,7 @@ export const updateCartItemQuantity = async (req: AuthenticatedRequest, res: Res
           prisma.product.findUnique({ where: { id: productId } }),
           prisma.cart.findUnique({ where: { userId } }),
         ]),
-        300
+        5000
       );
 
       if (!product) return next(new NotFoundError('Product not found'));
@@ -225,7 +246,7 @@ export const updateCartItemQuantity = async (req: AuthenticatedRequest, res: Res
           },
           data: { quantity },
         }),
-        300
+        5000
       );
 
       const updatedCart = await withFastTimeout(
@@ -239,7 +260,7 @@ export const updateCartItemQuantity = async (req: AuthenticatedRequest, res: Res
             },
           },
         }),
-        300
+        5000
       );
 
       return res.status(200).json({
@@ -270,7 +291,7 @@ export const removeFromCart = async (req: AuthenticatedRequest, res: Response, n
     if (!productId) return next(new BadRequestError('Product ID is required'));
 
     try {
-      const cart = await withFastTimeout(prisma.cart.findUnique({ where: { userId } }), 300);
+      const cart = await withFastTimeout(prisma.cart.findUnique({ where: { userId } }), 5000);
       if (!cart) return next(new NotFoundError('Cart not found'));
 
       await withFastTimeout(
@@ -282,7 +303,7 @@ export const removeFromCart = async (req: AuthenticatedRequest, res: Response, n
             },
           },
         }),
-        300
+        5000
       );
 
       const updatedCart = await withFastTimeout(
@@ -296,7 +317,7 @@ export const removeFromCart = async (req: AuthenticatedRequest, res: Response, n
             },
           },
         }),
-        300
+        5000
       );
 
       return res.status(200).json({
@@ -324,25 +345,28 @@ export const clearCart = async (req: AuthenticatedRequest, res: Response, next: 
     if (!userId) return next(new BadRequestError('User not authenticated'));
 
     try {
-      const cart = await withFastTimeout(prisma.cart.findUnique({ where: { userId } }), 300);
+      const cart = await withFastTimeout(prisma.cart.findUnique({ where: { userId } }), 5000);
       if (cart) {
         await withFastTimeout(
           prisma.cartItem.deleteMany({
             where: { cartId: cart.id },
           }),
-          300
+          5000
         );
       }
+      return res.status(200).json({
+        success: true,
+        message: 'Cart cleared successfully',
+        cart: { items: [], totalAmount: 0, payableAmount: 0 },
+      });
     } catch (_dbError) {
-      // Fallback
+      const updatedCart = clearFallbackCart(userId);
+      return res.status(200).json({
+        success: true,
+        message: 'Cart cleared successfully',
+        cart: updatedCart,
+      });
     }
-
-    clearFallbackCart(userId);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Cart cleared successfully',
-    });
   } catch (error) {
     next(error);
   }

@@ -70,7 +70,7 @@ const setInCache = <T>(key: string, data: T, ttlMs: number): void => {
 
 import { fallbackProducts } from '../utils/catalogFallback';
 
-const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 300): Promise<T> => {
+const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 5000): Promise<T> => {
   return Promise.race([
     promise,
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error('DB_TIMEOUT')), timeoutMs)),
