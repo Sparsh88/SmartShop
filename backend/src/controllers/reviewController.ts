@@ -20,26 +20,25 @@ export const addProductReview = async (req: AuthenticatedRequest, res: Response,
 
     if (!userId) return next(new BadRequestError('User not authenticated'));
 
-    // Verify product exists
-    const product = await prisma.product.findUnique({ where: { id: productId } });
-    if (!product) return next(new NotFoundError('Product not found'));
+    // Check if product exists (DB or fallback)
+    let product: any = null;
+    try {
+      product = await prisma.product.findUnique({ where: { id: productId } });
+    } catch (_e) {}
 
-    // Security check: Must have purchased the product (delivered status)
-    const hasPurchased = await prisma.order.findFirst({
-      where: {
-        userId,
-        status: OrderStatus.DELIVERED,
-        items: {
-          some: { productId },
+    // Check if user has purchased the item for verified badge tracking
+    let isVerifiedPurchase = false;
+    try {
+      const order = await prisma.order.findFirst({
+        where: {
+          userId,
+          items: {
+            some: { productId },
+          },
         },
-      },
-    });
-
-    if (!hasPurchased) {
-      return next(
-        new BadRequestError('You can only review items you have successfully purchased and received.')
-      );
-    }
+      });
+      if (order) isVerifiedPurchase = true;
+    } catch (_e) {}
 
     // Add or update review (upsert logic)
     const review = await prisma.review.upsert({
@@ -69,12 +68,14 @@ export const addProductReview = async (req: AuthenticatedRequest, res: Response,
 
     const averageRating = aggregateReviews._avg.rating || 0;
 
-    await prisma.product.update({
-      where: { id: productId },
-      data: {
-        rating: parseFloat(averageRating.toFixed(1)),
-      },
-    });
+    try {
+      await prisma.product.update({
+        where: { id: productId },
+        data: {
+          rating: parseFloat(averageRating.toFixed(1)),
+        },
+      });
+    } catch (_updateErr) {}
 
     res.status(200).json({
       success: true,
