@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './store/authStore';
@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ToastContainer from './components/ToastContainer';
 import ProtectedRoute from './components/ProtectedRoute';
+import StartupLoader from './components/StartupLoader';
 
 // Public Pages
 import Home from './pages/Home';
@@ -46,6 +47,7 @@ const queryClient = new QueryClient({
 
 export default function App() {
   const { checkAuth } = useAuthStore();
+  const [showLoader, setShowLoader] = useState(true);
 
   // Validate session on load
   useEffect(() => {
@@ -54,6 +56,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {showLoader && <StartupLoader onComplete={() => setShowLoader(false)} />}
       <BrowserRouter>
         <div className="flex flex-col min-h-screen bg-[#FAF9F6] dark:bg-[#0D0D0E] text-neutral-900 dark:text-neutral-100 selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-neutral-900 transition-colors duration-300">
           <Navbar />

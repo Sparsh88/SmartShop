@@ -26,13 +26,32 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [theme, setTheme] = useState(() => {
+    const stored = localStorage.getItem('theme');
+    if (stored) return stored;
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+  });
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // System theme preference listener
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemChange = (e: MediaQueryListEvent) => {
+      if (!localStorage.getItem('theme')) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+    mediaQuery.addEventListener('change', handleSystemChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemChange);
   }, []);
 
   // Theme effect

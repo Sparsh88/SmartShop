@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -22,6 +23,7 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<RegisterFields>({
     resolver: zodResolver(registerSchema),
@@ -31,6 +33,11 @@ export default function Register() {
       password: '',
     },
   });
+
+  // Ensure fields always start completely empty on page load
+  useEffect(() => {
+    reset({ name: '', email: '', password: '' });
+  }, [reset]);
 
   const onSubmit = async (data: RegisterFields) => {
     try {
@@ -60,14 +67,18 @@ export default function Register() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} autoComplete="off" className="space-y-4">
-            
+            {/* Decoy fields to capture aggressive browser autofill */}
+            <input type="text" name="fakeusernameremembered" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+            <input type="password" name="fakepasswordremembered" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+
             {/* Full Name */}
             <div className="space-y-1">
               <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 block">Full Name</span>
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Sparsh Chauhan"
+                  placeholder="Your name"
+                  autoComplete="off"
                   {...register('name')}
                   className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl py-3 pl-10 pr-4 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                 />
@@ -82,7 +93,8 @@ export default function Register() {
               <div className="relative">
                 <input
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder="your.email@example.com"
+                  autoComplete="off"
                   {...register('email')}
                   className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl py-3 pl-10 pr-4 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                 />
@@ -97,7 +109,8 @@ export default function Register() {
               <div className="relative">
                 <input
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="Create a password"
+                  autoComplete="new-password"
                   {...register('password')}
                   className="w-full bg-[#F4F3EF] dark:bg-[#1F1F24] border border-neutral-300/80 dark:border-neutral-700 rounded-2xl py-3 pl-10 pr-4 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-neutral-900 dark:focus:border-white transition"
                 />
