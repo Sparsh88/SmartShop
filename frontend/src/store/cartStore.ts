@@ -64,9 +64,39 @@ export const useCartStore = create<CartState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
+      // 1. Sync guest cart items saved locally before login
+      const localCartRaw = localStorage.getItem('guestCart');
+      if (localCartRaw) {
+        try {
+          const guestItems = JSON.parse(localCartRaw);
+          if (Array.isArray(guestItems) && guestItems.length > 0) {
+            for (const item of guestItems) {
+              if (item.productId) {
+                await api.post('/cart/add', { productId: item.productId, quantity: item.quantity || 1 }).catch(() => {});
+              }
+            }
+            localStorage.removeItem('guestCart');
+          }
+        } catch (_e) {}
+      }
+
+      // 2. Fetch server cart
       const res = await api.get('/cart');
-      const items = res.data.cart?.items || [];
-      set({ items, isLoading: false });
+      let serverItems = res.data.cart?.items || [];
+
+      // 3. Resilient check: If server cart is empty but local store already has items, sync them to server
+      if (serverItems.length === 0 && get().items.length > 0) {
+        const storeItems = [...get().items];
+        for (const item of storeItems) {
+          if (item.productId) {
+            await api.post('/cart/add', { productId: item.productId, quantity: item.quantity || 1 }).catch(() => {});
+          }
+        }
+        const refreshedRes = await api.get('/cart').catch(() => null);
+        serverItems = refreshedRes?.data?.cart?.items || storeItems;
+      }
+
+      set({ items: serverItems, isLoading: false });
       get().calculateTotals();
     } catch (err: any) {
       set({

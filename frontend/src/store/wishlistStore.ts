@@ -43,6 +43,22 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
+      // Sync guest wishlist items
+      const localWishlistRaw = localStorage.getItem('guestWishlist');
+      if (localWishlistRaw) {
+        try {
+          const guestProds = JSON.parse(localWishlistRaw);
+          if (Array.isArray(guestProds) && guestProds.length > 0) {
+            for (const p of guestProds) {
+              if (p.id) {
+                await api.post('/wishlist/toggle', { productId: p.id }).catch(() => {});
+              }
+            }
+            localStorage.removeItem('guestWishlist');
+          }
+        } catch (_e) {}
+      }
+
       const res = await api.get('/wishlist');
       set({ products: res.data.wishlist || [], isLoading: false });
     } catch (err: any) {
