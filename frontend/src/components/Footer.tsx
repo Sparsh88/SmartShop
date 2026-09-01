@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Instagram, Mail, Phone, MapPin, ArrowUpRight } from 'lucide-react';
+import { Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from './ScrollReveal';
 
 // WhatsApp icon SVG

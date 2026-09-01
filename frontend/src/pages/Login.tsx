@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { toast } from '../store/toastStore';
-import { LogIn, Mail, Lock, ArrowUpRight } from 'lucide-react';
+import { Mail, Lock, ArrowUpRight } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 
 const loginSchema = z.object({

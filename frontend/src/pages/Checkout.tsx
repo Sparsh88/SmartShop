@@ -5,7 +5,7 @@ import { toast } from '../store/toastStore';
 import { formatPrice } from '../utils/priceHelper';
 import api from '../services/api';
 import confetti from 'canvas-confetti';
-import { MapPin, Plus, CreditCard, ChevronRight, Check, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { MapPin, Plus, CreditCard, Check, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 
 export default function Checkout() {

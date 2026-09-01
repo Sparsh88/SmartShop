@@ -5,7 +5,7 @@ import ProductCard from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/LoadingSkeleton';
 import { SlidersHorizontal, ArrowUpDown, ChevronLeft, ChevronRight, Sparkles, ChevronRight as BreadcrumbArrow, X } from 'lucide-react';
 import { useState } from 'react';
-import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from '../components/ScrollReveal';
+import { ScrollReveal } from '../components/ScrollReveal';
 
 export default function ProductList() {
   const [searchParams, setSearchParams] = useSearchParams();

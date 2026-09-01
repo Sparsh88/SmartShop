@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import ProductCard from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/LoadingSkeleton';
-import { ArrowRight, ArrowUpRight, ShieldCheck, Truck, RotateCcw, Check, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ShieldCheck, Truck, RotateCcw, Sparkles } from 'lucide-react';
 import HeroCarousel from '../components/HeroCarousel';
 import RecommendationSection from '../components/RecommendationSection';
 import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from '../components/ScrollReveal';
