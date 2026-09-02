@@ -125,38 +125,38 @@ export default function Navbar() {
           </div>
 
           {/* 3. Right: Theme, Wishlist, Cart, Admin (if admin), Profile */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-3 shrink-0">
             
             {/* Mobile Search Toggle Button */}
             <button
               onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-              className="sm:hidden p-2.5 rounded-full text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/60 transition"
+              className="sm:hidden p-2 rounded-full text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/60 transition"
               title="Search"
               aria-label="Toggle Search Bar"
             >
-              <Search size={19} />
+              <Search size={18} />
             </button>
 
             {/* Theme Toggle Button */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2.5 rounded-full text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/60 transition spring-active"
+              className="p-2 sm:p-2.5 rounded-full text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/60 transition spring-active"
               title="Toggle Dark/Light Mode"
               aria-label="Toggle Theme"
             >
-              {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
 
             {/* Wishlist Button */}
             <Link
               to="/wishlist"
-              className="relative p-2.5 rounded-full text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/60 transition spring-active"
+              className="relative p-2 sm:p-2.5 rounded-full text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/60 transition spring-active"
               title="Wishlist"
               aria-label="Wishlist"
             >
-              <Heart size={20} />
+              <Heart size={19} />
               {wishlistItems.length > 0 && (
-                <span className="absolute top-1 right-1 bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
+                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
                   {wishlistItems.length}
                 </span>
               )}
@@ -165,13 +165,13 @@ export default function Navbar() {
             {/* Cart Button */}
             <Link
               to="/cart"
-              className="relative p-2.5 rounded-full text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/60 transition spring-active"
+              className="relative p-2 sm:p-2.5 rounded-full text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/60 transition spring-active"
               title="Shopping Bag"
               aria-label="Shopping Bag"
             >
-              <ShoppingBag size={20} />
+              <ShoppingBag size={19} />
               {totalCartCount > 0 && (
-                <span className="absolute top-1 right-1 bg-[#121212] text-[#FAF9F6] dark:bg-[#FAF9F6] dark:text-[#121212] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
+                <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 bg-[#121212] text-[#FAF9F6] dark:bg-[#FAF9F6] dark:text-[#121212] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
                   {totalCartCount}
                 </span>
               )}
@@ -181,16 +181,17 @@ export default function Navbar() {
             {isAuthenticated && user?.role === 'ADMIN' && (
               <Link
                 to="/admin"
-                className="inline-flex items-center gap-1.5 bg-[#121212] hover:bg-black dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-950 text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full transition shadow-soft-xs spring-active"
+                className="inline-flex items-center gap-1 bg-[#121212] hover:bg-black dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-950 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full transition shadow-soft-xs spring-active shrink-0"
+                title="Admin Dashboard"
               >
-                <LayoutDashboard size={13} />
-                <span>Admin</span>
+                <LayoutDashboard size={14} />
+                <span className="hidden sm:inline">Admin</span>
               </Link>
             )}
 
             {/* Profile Dropdown / Sign In Button */}
             {isAuthenticated ? (
-              <div className="relative">
+              <div className="relative shrink-0">
                 {isProfileOpen && (
                   <div
                     className="fixed inset-0 z-30 cursor-default"
@@ -200,20 +201,22 @@ export default function Navbar() {
 
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="relative z-40 flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-neutral-300/80 dark:border-neutral-700 hover:border-neutral-400 text-xs font-semibold text-neutral-800 dark:text-neutral-200 transition bg-white/70 dark:bg-neutral-900/70 spring-active shadow-soft-xs"
+                  className="relative z-40 flex items-center gap-1.5 sm:gap-2 p-1 sm:pl-2 sm:pr-3 sm:py-1.5 rounded-full border border-neutral-300/80 dark:border-neutral-700 hover:border-neutral-400 text-xs font-semibold text-neutral-800 dark:text-neutral-200 transition bg-white/70 dark:bg-neutral-900/70 spring-active shadow-soft-xs"
+                  aria-label="User Profile"
+                  title="User Account Menu"
                 >
-                  <div className="w-6 h-6 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 flex items-center justify-center text-[10px] font-bold">
+                  <div className="w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 flex items-center justify-center text-xs sm:text-[10px] font-bold shrink-0">
                     {user?.name?.charAt(0).toUpperCase() || 'U'}
                   </div>
-                  <span className="max-w-[80px] sm:max-w-[100px] truncate font-medium text-xs">
+                  <span className="hidden sm:inline-block max-w-[80px] sm:max-w-[100px] truncate font-medium text-xs">
                     {user?.name}
                   </span>
-                  <ChevronDown size={13} className="text-neutral-400" />
+                  <ChevronDown size={13} className="text-neutral-400 hidden sm:block" />
                 </button>
 
                 {/* Dropdown Menu */}
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#161618] border border-neutral-200/80 dark:border-neutral-800 rounded-3xl shadow-soft-xl py-2 z-40 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#161618] border border-neutral-200/80 dark:border-neutral-800 rounded-3xl shadow-soft-xl py-2 z-40 animate-in fade-in zoom-in-95 duration-200 max-w-[calc(100vw-2rem)]">
                     <div className="px-4 py-2.5 border-b border-neutral-100 dark:border-neutral-800">
                       <p className="text-xs font-bold text-neutral-900 dark:text-white truncate">{user?.name}</p>
                       <p className="text-[11px] text-neutral-400 truncate">{user?.email}</p>
@@ -266,7 +269,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="inline-flex items-center gap-2 bg-[#121212] hover:bg-black dark:bg-[#FAF9F6] dark:hover:bg-neutral-200 text-[#FAF9F6] dark:text-[#121212] px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition shadow-sm spring-active"
+                className="inline-flex items-center gap-2 bg-[#121212] hover:bg-black dark:bg-[#FAF9F6] dark:hover:bg-neutral-200 text-[#FAF9F6] dark:text-[#121212] px-3.5 sm:px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition shadow-sm spring-active shrink-0"
               >
                 Sign In
               </Link>

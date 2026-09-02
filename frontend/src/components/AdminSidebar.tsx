@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -6,9 +7,11 @@ import {
   Users,
   Ticket,
   ArrowLeft,
+  LogOut,
 } from 'lucide-react';
 
 export default function AdminSidebar() {
+  const { logout } = useAuthStore();
   const activeClass = 'flex items-center gap-3 px-4 py-3 rounded-2xl text-white dark:text-neutral-950 bg-[#121212] dark:bg-white text-xs uppercase tracking-wider font-bold shadow-soft-sm transition';
   const inactiveClass = 'flex items-center gap-3 px-4 py-3 rounded-2xl text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs uppercase tracking-wider font-bold transition';
 
@@ -66,8 +69,8 @@ export default function AdminSidebar() {
         </NavLink>
       </nav>
 
-      {/* Back link */}
-      <div className="border-t border-neutral-200/80 dark:border-neutral-800 pt-4">
+      {/* Back link & Logout */}
+      <div className="border-t border-neutral-200/80 dark:border-neutral-800 pt-4 space-y-1.5">
         <NavLink
           to="/"
           className="flex items-center gap-3 px-4 py-3 rounded-2xl text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs uppercase tracking-wider font-bold transition"
@@ -75,6 +78,13 @@ export default function AdminSidebar() {
           <ArrowLeft size={16} />
           Back to Store
         </NavLink>
+        <button
+          onClick={() => logout()}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-xs uppercase tracking-wider font-bold transition text-left"
+        >
+          <LogOut size={16} />
+          Sign Out
+        </button>
       </div>
 
     </aside>

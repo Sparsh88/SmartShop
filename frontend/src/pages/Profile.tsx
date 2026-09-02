@@ -13,11 +13,12 @@ import {
   CheckCircle,
   Clock,
   ArrowUpRight,
+  LogOut,
 } from 'lucide-react';
 import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from '../components/ScrollReveal';
 
 export default function Profile() {
-  const { user, updateUser } = useAuthStore();
+  const { user, updateUser, logout } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'profile' | 'addresses' | 'security' | 'notifications'>('profile');
 
   // Profile Edit State
@@ -246,6 +247,15 @@ export default function Profile() {
             >
               <Bell size={16} /> Notifications
             </button>
+
+            <div className="pt-2 border-t border-neutral-200/80 dark:border-neutral-800">
+              <button
+                onClick={() => logout()}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs uppercase tracking-wider font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition text-left"
+              >
+                <LogOut size={16} /> Sign Out
+              </button>
+            </div>
           </ScrollReveal>
         </aside>
 
