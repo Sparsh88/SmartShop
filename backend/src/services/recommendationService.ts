@@ -240,7 +240,7 @@ export const getPersonalizedRecommendations = async (
         orderBy: [{ rating: 'desc' }, { createdAt: 'desc' }],
         select: recommendationProductSelect,
       }),
-      300
+      4000
     ).catch(() => []);
 
     if (!candidateProducts || candidateProducts.length === 0) {

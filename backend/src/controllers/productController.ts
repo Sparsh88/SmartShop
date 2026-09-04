@@ -79,7 +79,7 @@ let isDbHealthy: boolean | null = null;
 let lastDbCheck = 0;
 
 export const withFastTimeout = <T>(promise: Promise<T>, timeoutMs: number = 4000): Promise<T> => {
-  if (isDbHealthy === false && Date.now() - lastDbCheck < 15000) {
+  if (isDbHealthy === false && Date.now() - lastDbCheck < 5000) {
     return Promise.reject(new Error('DB_CIRCUIT_OPEN'));
   }
 
@@ -197,7 +197,7 @@ export const getProducts = async (req: Request, res: Response, _next: NextFuncti
         }),
         prisma.product.count({ where }),
       ]),
-      300
+      4000
     );
 
     let searchMessage: string | undefined;
@@ -229,7 +229,7 @@ export const getProducts = async (req: Request, res: Response, _next: NextFuncti
             }),
             prisma.product.count({ where: synonymWhere }),
           ]),
-          300
+          4000
         );
 
         products = fallbackProducts;
@@ -375,7 +375,7 @@ export const getProductById = async (req: Request, res: Response, _next: NextFun
           },
         },
       }),
-      300
+      4000
     );
 
     if (!product) {
@@ -390,7 +390,7 @@ export const getProductById = async (req: Request, res: Response, _next: NextFun
         },
         take: 4,
       }),
-      300
+      4000
     );
 
     return res.status(200).json({
@@ -431,7 +431,7 @@ export const getFeaturedAndTrendingProducts = async (_req: Request, res: Respons
           select: productCardSelect,
         }),
       ]),
-      300
+      4000
     );
 
     if (featured.length === 0 && trending.length === 0) {
@@ -444,7 +444,7 @@ export const getFeaturedAndTrendingProducts = async (_req: Request, res: Respons
       trending,
     };
 
-    setCached('homepage-products', payload, 120000);
+    setCached('homepage-products', payload, 600000); // 10 minutes cache
     return res.status(200).json(payload);
   } catch (error: any) {
     const featured = fallbackProducts.filter(p => p.isFeatured).slice(0, 8);
@@ -456,6 +456,7 @@ export const getFeaturedAndTrendingProducts = async (_req: Request, res: Respons
       trending,
     };
 
+    setCached('homepage-products', payload, 30000); // 30s cache during cold start
     return res.status(200).json(payload);
   }
 };
@@ -708,7 +709,7 @@ export const getCategories = async (_req: Request, res: Response, _next: NextFun
       prisma.category.findMany({
         orderBy: { name: 'asc' },
       }),
-      300
+      4000
     );
 
     if (categories.length === 0) {
@@ -744,7 +745,7 @@ export const getBrands = async (_req: Request, res: Response, _next: NextFunctio
         select: { brand: true },
         distinct: ['brand'],
       }),
-      300
+      4000
     );
 
     if (brands.length === 0) {

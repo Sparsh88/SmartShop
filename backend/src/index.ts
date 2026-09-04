@@ -167,10 +167,18 @@ process.on('uncaughtException', (error: Error) => {
   console.error('[SmartShop Backend] Uncaught Exception:', error);
 });
 
-// Proactively connect to database to eliminate cold start on first user request
+// Proactively connect to database and maintain an active keep-alive pool to eliminate cold starts
 prisma.$connect()
   .then(() => {
     console.log('[SmartShop Backend] Database connection pool initialized successfully.');
+    // Keep database connection warm every 4 minutes (240,000 ms)
+    setInterval(async () => {
+      try {
+        await prisma.$executeRawUnsafe('SELECT 1;');
+      } catch (_keepAliveErr) {
+        // Ignore background keep-alive ping errors
+      }
+    }, 240000);
   })
   .catch((err: any) => {
     console.error('[SmartShop Backend] Database connection initialization warning:', err.message || err);
